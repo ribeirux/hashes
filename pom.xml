@@ -4,7 +4,7 @@
 
 	<groupId>org.hashes</groupId>
 	<artifactId>hashes</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>Hash Collision Denial of Service</name>
 	<description>Hash Collision Denial of Service</description>
 	<url>>https://github.com/ribeirux/hashes</url>
