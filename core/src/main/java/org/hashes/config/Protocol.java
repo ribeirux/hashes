@@ -83,7 +83,7 @@ public enum Protocol {
         }
 
         if (result == null) {
-            throw new IllegalArgumentException("Scheme name not supported");
+            throw new IllegalArgumentException("Unsupported protocol: " + schemeName);
         }
 
         return result;
