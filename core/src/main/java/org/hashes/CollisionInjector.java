@@ -1,5 +1,4 @@
-/*******************************************************************************
- *
+/**
  *    Copyright 2012 Pedro Ribeiro
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,15 +12,13 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- *    
- *******************************************************************************/
+ */
 package org.hashes;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +36,8 @@ import org.hashes.config.Protocol;
 import org.hashes.util.FileUtils;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * Collision injector.
@@ -83,13 +82,13 @@ public class CollisionInjector {
         final byte[] payload = this.buildPayload(collisions);
 
         final int numberOfClients = this.configuration.getNumberOfClients();
-        final List<Runnable> clients = new ArrayList<Runnable>(numberOfClients);
+        Builder<Runnable> clients = ImmutableList.builder();
 
         for (int i = 0; i < numberOfClients; i++) {
             clients.add(this.createClient(payload));
         }
 
-        this.runClients(clients);
+        this.runClients(clients.build());
     }
 
     protected void saveCollisions(final List<String> collisions) {
@@ -231,7 +230,7 @@ public class CollisionInjector {
                     this.configuration.isWaitResponse(), //
                     this.configuration.getCharset());
         } else {
-            throw new UnsupportedOperationException("Protocol not supported");
+            throw new UnsupportedOperationException("Client not implemented for protocol: " + target.getProtocol());
         }
 
         return client;

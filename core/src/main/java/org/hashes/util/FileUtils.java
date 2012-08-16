@@ -1,5 +1,4 @@
-/*******************************************************************************
- *
+/**
  *    Copyright 2012 Pedro Ribeiro
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +12,7 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- *    
- *******************************************************************************/
+ */
 package org.hashes.util;
 
 import java.io.BufferedOutputStream;
@@ -27,7 +25,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,6 +32,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * Holds the logic of looking up a file, in the following sequence:
@@ -116,7 +115,7 @@ public final class FileUtils {
                     out.close();
                 } catch (final IOException e) {
                     if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not close output stream for file: " + file.getPath(), e);
+                        LOG.error("Could not close output stream of file: " + file.getPath(), e);
                     }
                 }
             }
@@ -132,7 +131,7 @@ public final class FileUtils {
      * @param fileName name of the file
      * @param numberOfLines number of lines to read
      * @param charset the encoding to use
-     * @return the {@link List} of lines
+     * @return an immutable {@link List} with file contents
      * @throws IOException if an I/O error occurs
      */
     public static List<String> readLines(final String fileName, final int numberOfLines, final Charset charset)
@@ -144,12 +143,12 @@ public final class FileUtils {
         final InputStream prebuilt = FileUtils.lookupFile(fileName);
         final BufferedReader reader = new BufferedReader(new InputStreamReader(prebuilt, charset));
 
-        final List<String> list = new ArrayList<String>(numberOfLines);
+        Builder<String> lines = ImmutableList.builder();
 
         try {
             String line = reader.readLine();
             for (int i = 0; (i < numberOfLines) && (line != null); i++) {
-                list.add(line);
+                lines.add(line);
                 line = reader.readLine();
             }
         } finally {
@@ -157,11 +156,11 @@ public final class FileUtils {
                 reader.close();
             } catch (final IOException e) {
                 if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not close reader of file: " + fileName, e);
+                    LOG.error("Could not close input stream of file: " + fileName, e);
                 }
             }
         }
 
-        return list;
+        return lines.build();
     }
 }

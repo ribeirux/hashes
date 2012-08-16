@@ -1,5 +1,4 @@
-/*******************************************************************************
- *
+/**
  *    Copyright 2012 Pedro Ribeiro
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,25 +12,23 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- *    
- *******************************************************************************/
+ */
 package org.hashes.collision;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * Meet in the middle hash collision generator.
@@ -70,7 +67,8 @@ public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGe
 
         final Map<Integer, String> dictionary = this.createDictionary(hash);
 
-        final Collection<Callable<List<String>>> tasks = this.buildTasks(dictionary, numberOfKeys);
+        final List<Callable<List<String>>> tasks = this.buildTasks(dictionary, numberOfKeys);
+
         final ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
 
         try {
@@ -82,15 +80,13 @@ public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGe
                 executor.shutdown();
             }
 
-            final List<String> collisions = new ArrayList<String>(numberOfKeys);
+            Builder<String> collisions = ImmutableList.builder();
             for (final Future<List<String>> future : results) {
                 collisions.addAll(future.get());
             }
 
-            return Collections.unmodifiableList(collisions);
-        } catch (final InterruptedException e) {
-            throw new ComputationException(e);
-        } catch (final ExecutionException e) {
+            return collisions.build();
+        } catch (final Exception e) {
             throw new ComputationException(e);
         }
     }
@@ -115,7 +111,7 @@ public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGe
         return builder.toString();
     }
 
-    private Collection<Callable<List<String>>> buildTasks(final Map<Integer, String> dictionary, final int size) {
+    private List<Callable<List<String>>> buildTasks(final Map<Integer, String> dictionary, final int size) {
 
         final int range = END_KEY - START_KEY + 1;
         final int maxWorkers = Math.min(range, Runtime.getRuntime().availableProcessors());
@@ -123,7 +119,7 @@ public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGe
 
         final AtomicLong keyCounter = new AtomicLong();
 
-        final Collection<Callable<List<String>>> tasks = new ArrayList<Callable<List<String>>>(maxWorkers);
+        Builder<Callable<List<String>>> tasks = ImmutableList.builder();
 
         for (int i = 0; i < maxWorkers; i++) {
             final char start = (char) (i * interval + START_KEY);
@@ -132,7 +128,7 @@ public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGe
             tasks.add(new MITMWorker(start, end, keyCounter, size, dictionary));
         }
 
-        return tasks;
+        return tasks.build();
     }
 
     /**

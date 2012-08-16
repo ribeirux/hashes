@@ -1,3 +1,20 @@
+<!--
+
+       Copyright 2012 Pedro Ribeiro
+
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+
+           http://www.apache.org/licenses/LICENSE-2.0
+
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -41,7 +58,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<copyright.owner>Pedro Ribeiro</copyright.owner>
 		<copyright.year>2012</copyright.year>
-		<license.header>${basedir}/src/etc/header.txt</license.header>
+		<license.header>${basedir}/etc/header.txt</license.header>
 	</properties>
 
 	<repositories>
@@ -197,21 +214,6 @@
 					<artifactId>maven-site-plugin</artifactId>
 					<version>3.0</version>
 				</plugin>
-				<plugin>
-					<groupId>com.mycila.maven-license-plugin</groupId>
-					<artifactId>maven-license-plugin</artifactId>
-					<version>1.9.0</version>
-					<configuration>
-						<header>${license.header}</header>
-						<properties>
-							<copyright.year>${copyright.year}</copyright.year>
-							<copyright.owner>${copyright.owner}</copyright.owner>
-						</properties>
-						<strictCheck>true</strictCheck>
-						<aggregate>true</aggregate>
-						<failIfMissing>true</failIfMissing>
-					</configuration>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -238,7 +240,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -251,7 +252,6 @@
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -259,7 +259,6 @@
 					<encoding>${project.encoding}</encoding>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>

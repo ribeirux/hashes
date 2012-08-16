@@ -1,5 +1,4 @@
-/*******************************************************************************
- *
+/**
  *    Copyright 2012 Pedro Ribeiro
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,11 +12,11 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- *    
- *******************************************************************************/
+ */
 package org.hashes.collision;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -36,23 +35,29 @@ public abstract class AbstractDJBXACollisionGenerator extends AbstractCollisionG
 
         final List<String> seed = this.buildSeed();
 
-        final int iterations = (int) Math.ceil(Math.log(numberOfKeys) / Math.log(seed.size()));
+        final List<String> generatedKeys = new ArrayList<String>(numberOfKeys);
 
-        final List<String> generatedKeys = new ArrayList<String>((int) Math.pow(seed.size(), iterations));
-        this.buildCombinations(seed, iterations, "", generatedKeys);
+        if (numberOfKeys <= seed.size()) {
+            generatedKeys.addAll(seed.subList(0, numberOfKeys));
+        } else {
+            final int iterations = (int) Math.ceil(Math.log(numberOfKeys) / Math.log(seed.size()));
+            this.buildCombinations(seed, iterations, "", numberOfKeys, generatedKeys);
+        }
 
-        final List<String> result = generatedKeys.subList(0, numberOfKeys);
-
-        return result;
+        return Collections.unmodifiableList(generatedKeys);
     }
 
     private void buildCombinations(final List<String> seed, final int iterations, final String combination,
-            final List<String> result) {
+            final int numberOfKeys, final List<String> result) {
         if (iterations == 0) {
             result.add(combination);
         } else {
-            for (final String entry : seed) {
-                this.buildCombinations(seed, iterations - 1, combination + entry, result);
+            for (String entry : seed) {
+                if (result.size() < numberOfKeys) {
+                    this.buildCombinations(seed, iterations - 1, combination + entry, numberOfKeys, result);
+                } else {
+                    break;
+                }
             }
         }
     }

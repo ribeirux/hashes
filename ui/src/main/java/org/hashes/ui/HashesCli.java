@@ -1,5 +1,4 @@
-/*******************************************************************************
- *
+/**
  *    Copyright 2012 Pedro Ribeiro
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +12,7 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- *    
- *******************************************************************************/
+ */
 package org.hashes.ui;
 
 import java.io.File;
@@ -52,7 +50,7 @@ public class HashesCli {
 
     private static final int FORMATTER_WIDTH = 120;
 
-    private static final String CLI_SYNTAX = "hashes [options...] <url>";
+    private static final String CLI_SYNTAX = "hashes [options...] <POST url>";
 
     /**
      * Main entry.
@@ -94,7 +92,7 @@ public class HashesCli {
         if ((arguments == null) || arguments.isEmpty()) {
             throw new ParseException("Missing required option: url");
         } else if (arguments.size() > 1) {
-            LOG.warn("Multiple urls are not allowed. Using the first one");
+            LOG.warn("Multiple urls are not allowed. Using: " + arguments.get(0));
         }
 
         final URL url = new URL(arguments.get(0));
