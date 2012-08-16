@@ -118,7 +118,7 @@ public enum CliOption {
      * @return the option
      */
     public Option getOption() {
-        return option;
+        return this.option;
     }
 
     /**

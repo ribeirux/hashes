@@ -51,7 +51,7 @@ public enum Protocol {
      * @return the schemeName property
      */
     public String getSchemeName() {
-        return schemeName;
+        return this.schemeName;
     }
 
     /**
@@ -60,7 +60,7 @@ public enum Protocol {
      * @return the defaultPort property
      */
     public int getDefaultPort() {
-        return defaultPort;
+        return this.defaultPort;
     }
 
     /**

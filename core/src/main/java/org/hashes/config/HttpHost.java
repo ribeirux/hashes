@@ -52,7 +52,7 @@ public class HttpHost {
         this.hostname = Preconditions.checkNotNull(hostname, "hostname");
         this.port = port;
         this.connectTimeout = connectTimeout;
-        readTimeout = readTImeout;
+        this.readTimeout = readTImeout;
     }
 
     /**
@@ -61,7 +61,7 @@ public class HttpHost {
      * @return the protocol property
      */
     public Protocol getProtocol() {
-        return protocol;
+        return this.protocol;
     }
 
     /**
@@ -70,7 +70,7 @@ public class HttpHost {
      * @return the hostname property
      */
     public String getHostname() {
-        return hostname;
+        return this.hostname;
     }
 
     /**
@@ -79,7 +79,7 @@ public class HttpHost {
      * @return the port property
      */
     public int getPort() {
-        return port;
+        return this.port;
     }
 
     /**
@@ -88,7 +88,7 @@ public class HttpHost {
      * @return the connectTimeout property
      */
     public int getConnectTimeout() {
-        return connectTimeout;
+        return this.connectTimeout;
     }
 
     /**
@@ -97,7 +97,7 @@ public class HttpHost {
      * @return the readTimeout property
      */
     public int getReadTimeout() {
-        return readTimeout;
+        return this.readTimeout;
     }
 
     /**
@@ -106,6 +106,6 @@ public class HttpHost {
      * @return true if the connection should use the default port, otherwise false
      */
     public boolean hasDefaultPort() {
-        return port == protocol.getDefaultPort();
+        return this.port == this.protocol.getDefaultPort();
     }
 }

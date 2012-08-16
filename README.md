@@ -2,7 +2,8 @@
 
 ## About
 
-Cross-plataform tool that generates and injects different keys with the same hash code in order to test web applications against hash collision attacks.
+Cross-plataform tool, that generates and injects different keys with the same hash code, in order to test web applications against hash collision attacks.
+
 Supported web application technologies:
  - java (equivalent substrings)
  - php (equivalent substrings)
@@ -19,9 +20,9 @@ Hashes is released under the terms of the Apache License Version 2.0.
 
 	hashes [options...] <url>
 	 -a,--asp <seed>                     Build ASP payload (default OFF)
-	 -b,--connection-timeout <timeout>   Connection timeout in seconds (default 60)
+	 -b,--connection-timeout <timeout>   Connection timeout in seconds, zero to disable timeout (default 60)
 	 -c,--clients <clients>              Number of clients to run (default 1)
-	 -d,--read-timeout <timeout>         Read timeout in seconds (default 60)
+	 -d,--read-timeout <timeout>         Read timeout in seconds, zero to disable timeout (default 60)
 	 -g,--v8 <seed>                      Build V8 payload (default OFF)
 	 -h,--help                           Print this message
 	 -j,--java                           Build JAVA payload (default OFF)

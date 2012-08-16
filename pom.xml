@@ -5,15 +5,43 @@
 	<groupId>org.hashes</groupId>
 	<artifactId>hashes</artifactId>
 	<version>0.0.1</version>
-	<name>Hash Collision Denial of Service</name>
-	<description>Hash Collision Denial of Service</description>
-	<url>>https://github.com/ribeirux/hashes</url>
+	<name>Hash collision denial of service testing tool</name>
+	<description>Cross-plataform tool, that generates and injects different keys with the same hash code, in order to test web applications against hash collision attacks.</description>
+	<url>https://github.com/ribeirux/hashes</url>
 	<inceptionYear>2012</inceptionYear>
 	<packaging>pom</packaging>
 
+	<scm>
+		<url>https://github.com/ribeirux/hashes</url>
+		<connection>scm:git@github.com:ribeirux/hashes.git</connection>
+		<developerConnection>scm:git:git@github.com:ribeirux/hashes.git</developerConnection>
+	</scm>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/ribeirux/hashes/issues</url>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>ribeirux</id>
+			<name>Pedro Ribeiro</name>
+		</developer>
+	</developers>
+
 	<properties>
 		<project.encoding>UTF-8</project.encoding>
-		<project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<copyright.owner>Pedro Ribeiro</copyright.owner>
+		<copyright.year>2012</copyright.year>
+		<license.header>${basedir}/src/etc/header.txt</license.header>
 	</properties>
 
 	<repositories>
@@ -148,9 +176,45 @@
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>2.3</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>2.4</version>
+					<configuration>
+						<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.2.2</version>
+					<configuration>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.0</version>
+				</plugin>
+				<plugin>
+					<groupId>com.mycila.maven-license-plugin</groupId>
+					<artifactId>maven-license-plugin</artifactId>
+					<version>1.9.0</version>
+					<configuration>
+						<header>${license.header}</header>
+						<properties>
+							<copyright.year>${copyright.year}</copyright.year>
+							<copyright.owner>${copyright.owner}</copyright.owner>
+						</properties>
+						<strictCheck>true</strictCheck>
+						<aggregate>true</aggregate>
+						<failIfMissing>true</failIfMissing>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -222,8 +286,6 @@
 				<version>2.5.1</version>
 				<configuration>
 					<onlyAnalyze>org.hashes.*</onlyAnalyze>
-					<xmlOutput>true</xmlOutput>
-					<xmlOutputDirectory>target/site</xmlOutputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -232,8 +294,20 @@
 				<version>2.7.1</version>
 				<configuration>
 					<linlXref>true</linlXref>
-					<minimumTokens>100</minimumTokens>
 					<targetJdk>1.6</targetJdk>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -287,7 +361,7 @@
 			</build>
 		</profile>
 	</profiles>
-	
+
 	<modules>
 		<module>core</module>
 		<module>ui</module>

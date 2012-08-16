@@ -67,39 +67,39 @@ public class HttpClient implements Runnable {
         this.target = Preconditions.checkNotNull(target);
         this.payload = Preconditions.checkNotNull(payload, "payload");
         this.waitForResponse = waitForResponse;
-        responseCharset = Preconditions.checkNotNull(charset, "responseCharset");
+        this.responseCharset = Preconditions.checkNotNull(charset, "responseCharset");
     }
 
     @Override
     public void run() {
-        for (int i = 0; i < requests; i++) {
+        for (int i = 0; i < this.requests; i++) {
 
             Socket socket = null;
             OutputStream output = null;
             InputStream input = null;
 
             try {
-                socket = createUnconnectedSocket();
-                applySettings(socket);
-                socket.connect(new InetSocketAddress(target.getHostname(), target.getPort()),
-                        target.getConnectTimeout());
+                socket = this.createUnconnectedSocket();
+                this.applySettings(socket);
+                socket.connect(new InetSocketAddress(this.target.getHostname(), this.target.getPort()),
+                        this.target.getConnectTimeout());
 
                 // write the entire byte array in one shot and close the stream.
                 // In this situation, buffering would add extra overhead!
                 output = socket.getOutputStream();
-                output.write(payload);
+                output.write(this.payload);
                 output.flush();
 
-                if (waitForResponse && LOG.isInfoEnabled()) {
+                if (this.waitForResponse && LOG.isInfoEnabled()) {
                     input = socket.getInputStream();
-                    LOG.info(new String(ByteStreams.toByteArray(input), responseCharset));
+                    LOG.info(new String(ByteStreams.toByteArray(input), this.responseCharset));
                 }
             } catch (final Exception e) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("An error occurred while injecting payload. " + e.getMessage(), e);
                 }
             } finally {
-                closeQuietly(output, input, socket);
+                this.closeQuietly(output, input, socket);
             }
         }
     }
@@ -143,6 +143,6 @@ public class HttpClient implements Runnable {
 
     protected void applySettings(final Socket socket) throws SocketException {
         socket.setTcpNoDelay(true);
-        socket.setSoTimeout(target.getConnectTimeout());
+        socket.setSoTimeout(this.target.getReadTimeout());
     }
 }

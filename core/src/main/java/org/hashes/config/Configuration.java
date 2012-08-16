@@ -102,9 +102,9 @@ public final class Configuration {
 
         private int numberOfClients = 1;
 
-        private int connectTimeout = 60;
+        private int connectTimeout = 60000;
 
-        private int readTimeout = 60;
+        private int readTimeout = 60000;
 
         /**
          * Creates a new builder with mandatory fields.
@@ -265,7 +265,7 @@ public final class Configuration {
         /**
          * Connect timeout.
          * 
-         * @param connectTimeout connect timeout in seconds.
+         * @param connectTimeout connect timeout in milliseconds.
          * @return the configuration builder.
          */
         public ConfigurationBuilder withConnectTimeout(final int connectTimeout) {
@@ -278,11 +278,11 @@ public final class Configuration {
         /**
          * Read timeout.
          * 
-         * @param readTimeout read timeout in seconds.
+         * @param readTimeout read timeout in milliseconds.
          * @return the configuration builder.
          */
         public ConfigurationBuilder withReadTimeout(final int readTimeout) {
-            Preconditions.checkArgument(readTimeout > 0, "readTimeout");
+            Preconditions.checkArgument(readTimeout >= 0, "readTimeout");
             this.readTimeout = readTimeout;
 
             return this;
