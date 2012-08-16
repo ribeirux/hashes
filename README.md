@@ -18,7 +18,7 @@ Hashes is released under the terms of the Apache License Version 2.0.
 
 **Use only for testing purposes, not for evil.**
 
-	hashes [options...] <url>
+	hashes [options...] <POST url>
 	 -a,--asp <seed>                     Build ASP payload (default OFF)
 	 -b,--connection-timeout <timeout>   Connection timeout in seconds, zero to disable timeout (default 60)
 	 -c,--clients <clients>              Number of clients to run (default 1)
