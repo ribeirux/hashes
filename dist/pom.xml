@@ -22,7 +22,7 @@
 	<parent>
 		<artifactId>hashes</artifactId>
 		<groupId>org.hashes</groupId>
-		<version>0.0.1</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>hashes-dist</artifactId>
