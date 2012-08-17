@@ -2,7 +2,7 @@
 
 ## About
 
-Cross-plataform tool, that generates and injects different keys with the same hash code, in order to test web applications against hash collision attacks.
+Hashes is a Cross-plataform tool, that generates and injects different keys with the same hash code, in order to test web applications against hash collision attacks (28th Chaos Communication Congress).
 
 Supported web application technologies:
  - java (equivalent substrings)
