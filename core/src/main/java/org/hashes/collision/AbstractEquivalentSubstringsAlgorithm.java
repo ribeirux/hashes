@@ -22,12 +22,12 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 /**
- * DJBXA hash collision generator.
+ * Base class of equivalent substrings collision algorithm.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public abstract class AbstractDJBXACollisionGenerator extends AbstractCollisionGenerator {
+public abstract class AbstractEquivalentSubstringsAlgorithm extends AbstractCollisionAlgorithm {
 
     @Override
     public List<String> generateCollisions(final int numberOfKeys) {
@@ -62,5 +62,10 @@ public abstract class AbstractDJBXACollisionGenerator extends AbstractCollisionG
         }
     }
 
+    /**
+     * Build DJBXA seed.
+     * 
+     * @return the seed
+     */
     protected abstract List<String> buildSeed();
 }

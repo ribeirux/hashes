@@ -17,43 +17,38 @@ package org.hashes.collision;
 
 import java.util.List;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 /**
- * DJBX33ACollisionGenerator test.
+ * DJBX33A hash collision algorithm.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-@Test(groups = "functional", testName = "collision.DJBX33ACollisionGeneratorTest")
-public class DJBX33ACollisionGeneratorTest {
+public class DJBX33ACollisionAlgorithm extends AbstractEquivalentSubstringsAlgorithm {
 
-    /**
-     * Test DJBX33A hash collision generation.
-     */
-    public void testCollisions() {
-        final int numberOfKeys = 1000;
+    private static final String PRE_BUILT_FILE_NAME = "php.txt";
 
-        final DJBX33ACollisionGenerator gen = new DJBX33ACollisionGenerator();
-        final List<String> collisions = gen.generateCollisions(numberOfKeys);
+    @Override
+    public int hash(final String key) {
+        Preconditions.checkNotNull(key, "key");
 
-        Assert.assertEquals(collisions.size(), numberOfKeys);
-
-        final int hash = this.hash(collisions.get(0));
-
-        for (final String key : collisions) {
-            Assert.assertEquals(this.hash(key), hash);
-        }
-    }
-
-    private int hash(final String key) {
         int hash = 5381;
-
         for (int i = 0; i < key.length(); i++) {
             hash = ((hash << 5) + hash) + key.charAt(i);
         }
 
         return hash;
+    }
+
+    @Override
+    protected List<String> buildSeed() {
+        return ImmutableList.of("Ez", "FY", "G8");
+    }
+
+    @Override
+    protected String getPreBuiltCollisionsFileName() {
+        return PRE_BUILT_FILE_NAME;
     }
 }

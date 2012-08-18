@@ -31,12 +31,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
 /**
- * Meet in the middle hash collision generator.
+ * Base class of meet in the middle hash collision algorithm.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGenerator {
+public abstract class AbstractMITMAlgorithm extends AbstractCollisionAlgorithm {
 
     private static final int DICTIONARY_SIZE = (int) Math.pow(2, 18);
 
@@ -55,7 +55,7 @@ public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGe
      * 
      * @param seed MITM seed
      */
-    public AbstractMITMCollisionGenerator(final String seed) {
+    public AbstractMITMAlgorithm(final String seed) {
         this.seed = Preconditions.checkNotNull(seed, "seed");
     }
 
@@ -63,7 +63,7 @@ public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGe
     public List<String> generateCollisions(final int numberOfKeys) {
         Preconditions.checkArgument(numberOfKeys > 0, "numberOfKeys");
 
-        final int hash = this.hashForth(this.seed);
+        final int hash = this.hash(this.seed);
 
         final Map<Integer, String> dictionary = this.createDictionary(hash);
 
@@ -169,7 +169,7 @@ public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGe
         private void crack(final String prefix, final char startChar, final char endChar, final List<String> collisions) {
 
             if (prefix.length() == KEY_SIZE) {
-                final String precomp = this.dictionary.get(AbstractMITMCollisionGenerator.this.hashForth(prefix));
+                final String precomp = this.dictionary.get(AbstractMITMAlgorithm.this.hash(prefix));
                 if (precomp != null) {
                     final long currentValue = this.keyCounter.getAndIncrement();
                     if (currentValue < this.maxNumberOfKeys) {
@@ -183,14 +183,6 @@ public abstract class AbstractMITMCollisionGenerator extends AbstractCollisionGe
             }
         }
     }
-
-    /**
-     * Compute the hash code of the key. This method must be thread safe.
-     * 
-     * @param key the key to hash
-     * @return the hash code
-     */
-    protected abstract int hashForth(final String key);
 
     /**
      * Compute the hash back code from the key.

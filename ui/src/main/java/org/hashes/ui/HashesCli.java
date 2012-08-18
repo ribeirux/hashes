@@ -29,10 +29,10 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hashes.CollisionInjector;
-import org.hashes.collision.DJBX31ACollisionGenerator;
-import org.hashes.collision.DJBX33ACollisionGenerator;
-import org.hashes.collision.DJBX33XCollisionGenerator;
-import org.hashes.collision.V8CollisionGenerator;
+import org.hashes.collision.DJBX31ACollisionAlgorithm;
+import org.hashes.collision.DJBX33ACollisionAlgorithm;
+import org.hashes.collision.DJBX33XCollisionAlgorithm;
+import org.hashes.collision.V8CollisionAlgorithm;
 import org.hashes.config.Configuration;
 import org.hashes.config.Configuration.ConfigurationBuilder;
 
@@ -115,15 +115,15 @@ public class HashesCli {
 
         // language
         if (cmd.hasOption(CliOption.JAVA.getOption().getOpt())) {
-            builder.withCollisionGenerator(new DJBX31ACollisionGenerator());
+            builder.withCollisionGenerator(new DJBX31ACollisionAlgorithm());
         } else if (cmd.hasOption(CliOption.PHP.getOption().getOpt())) {
-            builder.withCollisionGenerator(new DJBX33ACollisionGenerator());
+            builder.withCollisionGenerator(new DJBX33ACollisionAlgorithm());
         } else if (cmd.hasOption(CliOption.ASP.getOption().getOpt())) {
             final String seed = (String) cmd.getParsedOptionValue(CliOption.ASP.getOption().getOpt());
-            builder.withCollisionGenerator(new DJBX33XCollisionGenerator(seed));
+            builder.withCollisionGenerator(new DJBX33XCollisionAlgorithm(seed));
         } else if (cmd.hasOption(CliOption.V8.getOption().getOpt())) {
             final String seed = (String) cmd.getParsedOptionValue(CliOption.V8.getOption().getOpt());
-            builder.withCollisionGenerator(new V8CollisionGenerator(seed));
+            builder.withCollisionGenerator(new V8CollisionAlgorithm(seed));
         }
 
         final String saveKeys = (String) cmd.getParsedOptionValue(CliOption.SAVE_KEYS.getOption().getOpt());

@@ -15,36 +15,28 @@
  */
 package org.hashes.collision;
 
-import java.util.List;
-
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * V8CollisionGenerator tests.
+ * DJBX33A hash collision algorithm test.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-@Test(groups = "functional", testName = "collision.V8CollisionGeneratorTest")
-public class V8CollisionGeneratorTest {
+@Test(groups = "functional", testName = "collision.DJBX33ACollisionAlgorithmTest")
+public class DJBX33ACollisionAlgorithmTest extends CollisionAlgorithmTestBase {
 
     /**
-     * Test V8 hash collision generation.
+     * Test DJBX33A hash collision algorithm.
      */
-    public void testCollisions() {
-        final String seed = "hashes";
-        final int numberOfKeys = 1000;
+    public void testDJBX33A() {
+        this.testCollisionGeneratorAlgorithm(new DJBX33ACollisionAlgorithm(), true);
+    }
 
-        final V8CollisionGenerator gen = new V8CollisionGenerator(seed);
-        final List<String> collisions = gen.generateCollisions(numberOfKeys);
-
-        Assert.assertEquals(collisions.size(), numberOfKeys);
-
-        final int seedHash = gen.hashForth(seed);
-
-        for (final String key : collisions) {
-            Assert.assertEquals(seedHash, gen.hashForth(key));
-        }
+    /**
+     * Test DJBX33A pre-built hash collisions.
+     */
+    public void testPreBuiltDJBX33A() {
+        this.testCollisionGeneratorAlgorithm(new DJBX33ACollisionAlgorithm(), false);
     }
 }

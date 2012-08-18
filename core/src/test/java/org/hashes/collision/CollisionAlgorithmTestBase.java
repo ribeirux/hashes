@@ -18,32 +18,34 @@ package org.hashes.collision;
 import java.util.List;
 
 import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
- * DJBX31ACollisionGenerator test.
+ * Base class for collision algorithm tests.
  * 
- * @author ribeirux
- * @version $Revision$
+ * @author pedroribeiro
  */
-@Test(groups = "functional", testName = "collision.DJBX33ACollisionGeneratorTest")
-public class DJBX31ACollisionGeneratorTest {
+public class CollisionAlgorithmTestBase {
+
+    // higher than 0
+    private static final int NUMBER_OF_KEYS = 1000;
 
     /**
-     * Test DJBX31A hash collision generation.
+     * Test hash collision algorithm.
+     * 
+     * @param algorithm collision generator algorithm
+     * @param forceNew forces the generation of new keys instead of using pre-built
      */
-    public void testCollisions() {
-        final int numberOfKeys = 1000;
+    public void testCollisionGeneratorAlgorithm(final AbstractCollisionAlgorithm algorithm,
+            final boolean forceNew) {
 
-        final DJBX31ACollisionGenerator gen = new DJBX31ACollisionGenerator();
-        final List<String> collisions = gen.generateCollisions(numberOfKeys);
+        final List<String> collisions = algorithm.generateCollisions(NUMBER_OF_KEYS, forceNew);
 
-        Assert.assertEquals(collisions.size(), numberOfKeys);
+        Assert.assertEquals(collisions.size(), NUMBER_OF_KEYS);
 
-        final int hash = collisions.get(0).hashCode();
+        final int hash = algorithm.hash(collisions.get(0));
 
         for (final String key : collisions) {
-            Assert.assertEquals(key.hashCode(), hash);
+            Assert.assertEquals(algorithm.hash(key), hash);
         }
     }
 

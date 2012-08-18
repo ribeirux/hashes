@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * File utils tests.
  * 
- * @author pedroribeiro
+ * @author ribeirux
  */
 @Test(groups = "functional", testName = "util.FileUtilsTest")
 public class FileUtilsTest {
@@ -39,7 +39,7 @@ public class FileUtilsTest {
     private static final String RESOURCES_FOLDER = new StringBuilder().append("src").append(File.separator)
             .append("test").append(File.separator).append("resources").append(File.separator).toString();
 
-    private static final String DUMMY_FILE = "dummy.txt";
+    private static final String FILE = "java.txt";
 
     private static final String NO_FILE = "268c41b9-078a-4196-8bbf-3ddb1a416e82.txt";
 
@@ -52,7 +52,7 @@ public class FileUtilsTest {
 
         InputStream input = null;
         try {
-            input = FileUtils.lookupFile(DUMMY_FILE);
+            input = FileUtils.lookupFile(FILE);
             Assert.assertNotNull(input);
         } finally {
             if (input != null) {
@@ -73,7 +73,7 @@ public class FileUtilsTest {
         InputStream input = null;
 
         try {
-            input = FileUtils.lookupFile(RESOURCES_FOLDER + DUMMY_FILE);
+            input = FileUtils.lookupFile(RESOURCES_FOLDER + FILE);
             Assert.assertNotNull(input);
         } finally {
             if (input != null) {

@@ -15,15 +15,17 @@
  */
 package org.hashes.collision;
 
+import com.google.common.base.Preconditions;
+
 /**
- * Google V8 meet in the middle hash collision generator.
+ * Google V8 hash collision algorithm.
  * <p>
- * Based on algorithm: https://github.com/hastebrot/V8-Hash-Collision-Generator
+ * Based on: https://github.com/hastebrot/V8-Hash-Collision-Generator
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public class V8CollisionGenerator extends AbstractMITMCollisionGenerator {
+public class V8CollisionAlgorithm extends AbstractMITMAlgorithm {
 
     private static final String PRE_BUILT_FILE_NAME = "v8.txt";
 
@@ -32,14 +34,15 @@ public class V8CollisionGenerator extends AbstractMITMCollisionGenerator {
      * 
      * @param seed MITM seed
      */
-    public V8CollisionGenerator(final String seed) {
+    public V8CollisionAlgorithm(final String seed) {
         super(seed);
     }
 
     @Override
-    protected int hashForth(final String key) {
-        int hash = 0;
+    public int hash(final String key) {
+        Preconditions.checkNotNull(key, "key");
 
+        int hash = 0;
         for (int i = 0; i < key.length(); i++) {
             hash += key.charAt(i);
             hash += (hash << 10);

@@ -15,28 +15,29 @@
  */
 package org.hashes.collision;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
+import org.testng.annotations.Test;
 
 /**
- * DJBX33A collision generator.
+ * DJBX31A hash collision algorithm test.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public class DJBX33ACollisionGenerator extends AbstractDJBXACollisionGenerator {
+@Test(groups = "functional", testName = "collision.DJBX31ACollisionAlgorithmTest")
+public class DJBX31ACollisionAlgorithmTest extends CollisionAlgorithmTestBase {
 
-    private static final String PRE_BUILT_FILE_NAME = "php.txt";
-
-    @Override
-    protected List<String> buildSeed() {
-        return ImmutableList.of("Ez", "FY", "G8");
+    /**
+     * Test DJBX31A hash collision algorithm.
+     */
+    public void testDJBX31A() {
+        this.testCollisionGeneratorAlgorithm(new DJBX31ACollisionAlgorithm(), true);
     }
 
-    @Override
-    protected String getPreBuiltCollisionsFileName() {
-        return PRE_BUILT_FILE_NAME;
+    /**
+     * Test DJBX31A pre-built hash collisions.
+     */
+    public void testPreBuiltDJBX31A() {
+        this.testCollisionGeneratorAlgorithm(new DJBX31ACollisionAlgorithm(), false);
     }
 
 }

@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.hashes.collision.AbstractCollisionGenerator;
-import org.hashes.collision.DJBX33ACollisionGenerator;
+import org.hashes.collision.AbstractCollisionAlgorithm;
+import org.hashes.collision.DJBX33ACollisionAlgorithm;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -48,7 +48,7 @@ public final class Configuration {
     // optional
     private final String path;
 
-    private final AbstractCollisionGenerator collisionGenerator;
+    private final AbstractCollisionAlgorithm collisionGenerator;
 
     private final File collisionsFile;
 
@@ -86,7 +86,7 @@ public final class Configuration {
 
         private String path = "/";
 
-        private AbstractCollisionGenerator collisionGenerator = new DJBX33ACollisionGenerator();
+        private AbstractCollisionAlgorithm collisionGenerator = new DJBX33ACollisionAlgorithm();
 
         private File collisionsFile = null;
 
@@ -171,7 +171,7 @@ public final class Configuration {
          * @param collisionGenerator the collision generator algorithm.
          * @return the configuration builder
          */
-        public ConfigurationBuilder withCollisionGenerator(final AbstractCollisionGenerator collisionGenerator) {
+        public ConfigurationBuilder withCollisionGenerator(final AbstractCollisionAlgorithm collisionGenerator) {
             this.collisionGenerator = Preconditions.checkNotNull(collisionGenerator, "collisionGenerator");
 
             return this;
@@ -378,7 +378,7 @@ public final class Configuration {
      * 
      * @return the collisionGenerator property
      */
-    public AbstractCollisionGenerator getCollisionGenerator() {
+    public AbstractCollisionAlgorithm getCollisionGenerator() {
         return collisionGenerator;
     }
 

@@ -25,16 +25,24 @@ import org.hashes.util.FileUtils;
 import com.google.common.base.Charsets;
 
 /**
- * Hash collision generator.
+ * Hash collision algorithm.
  * <p>
- * All hash collision algorithms must extends this class.
+ * All hash collision algorithms should extends this class.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public abstract class AbstractCollisionGenerator {
+public abstract class AbstractCollisionAlgorithm {
 
-    private static final Log LOG = LogFactory.getLog(AbstractCollisionGenerator.class);
+    private static final Log LOG = LogFactory.getLog(AbstractCollisionAlgorithm.class);
+
+    /**
+     * Computes the hash code of the specified key.
+     * 
+     * @param key the key to compute the hash code
+     * @return the hash code
+     */
+    public abstract int hash(String key);
 
     /**
      * Generate a list of distinct keys with the same hash code.
@@ -43,13 +51,6 @@ public abstract class AbstractCollisionGenerator {
      * @return a list of distinct keys with the same hash code
      */
     public abstract List<String> generateCollisions(final int numberOfKeys);
-
-    /**
-     * Get pre-built collisions file name.
-     * 
-     * @return the name of the file with pre-built collisions
-     */
-    protected abstract String getPreBuiltCollisionsFileName();
 
     /**
      * Load a list of distinct keys with the same hash code.
@@ -88,4 +89,10 @@ public abstract class AbstractCollisionGenerator {
         return collisions;
     }
 
+    /**
+     * Get pre-built collisions file name.
+     * 
+     * @return the name of the file with pre-built collisions
+     */
+    protected abstract String getPreBuiltCollisionsFileName();
 }

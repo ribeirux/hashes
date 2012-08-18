@@ -15,44 +15,31 @@
  */
 package org.hashes.collision;
 
+import java.util.List;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
 /**
- * DJBX33X meet in the middle hash collision generator.
+ * DJBX33A hash collision algorithm.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public class DJBX33XCollisionGenerator extends AbstractMITMCollisionGenerator {
+public class DJBX31ACollisionAlgorithm extends AbstractEquivalentSubstringsAlgorithm {
 
-    private static final String PRE_BUILT_FILE_NAME = "asp.txt";
+    private static final String PRE_BUILT_FILE_NAME = "java.txt";
 
-    /**
-     * Creates a new instance with specified seed.
-     * 
-     * @param seed MITM seed
-     */
-    public DJBX33XCollisionGenerator(final String seed) {
-        super(seed);
+    @Override
+    public int hash(final String key) {
+        Preconditions.checkNotNull(key, "key");
+
+        return key.hashCode();
     }
 
     @Override
-    protected int hashForth(final String key) {
-        int hash = 5381;
-        for (int i = 0; i < key.length(); i++) {
-            hash = ((hash << 5) + hash) ^ key.charAt(i);
-        }
-
-        return hash;
-    }
-
-    @Override
-    protected int hashBack(final String key, final int hash) {
-        int result = hash;
-
-        for (int i = key.length(); i > 0; i--) {
-            result = (result ^ key.charAt(i - 1)) * 1041204193;
-        }
-
-        return result;
+    protected List<String> buildSeed() {
+        return ImmutableList.of("xw", "yX", "z9");
     }
 
     @Override
