@@ -29,6 +29,9 @@ import org.testng.annotations.Test;
 @Test(groups = "functional", testName = "collision.V8CollisionGeneratorTest")
 public class V8CollisionGeneratorTest {
 
+    /**
+     * Test V8 hash collision generation.
+     */
     public void testCollisions() {
         final String seed = "hashes";
         final int numberOfKeys = 1000;

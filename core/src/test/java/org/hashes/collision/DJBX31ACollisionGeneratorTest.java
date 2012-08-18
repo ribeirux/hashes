@@ -29,6 +29,9 @@ import org.testng.annotations.Test;
 @Test(groups = "functional", testName = "collision.DJBX33ACollisionGeneratorTest")
 public class DJBX31ACollisionGeneratorTest {
 
+    /**
+     * Test DJBX31A hash collision generation.
+     */
     public void testCollisions() {
         final int numberOfKeys = 1000;
 
