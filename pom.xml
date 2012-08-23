@@ -54,7 +54,7 @@
 	</developers>
 
 	<properties>
-		<project.encoding>UTF-8</project.encoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<copyright.owner>Pedro Ribeiro</copyright.owner>
 		<copyright.year>2012</copyright.year>
@@ -246,7 +246,6 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
-					<encoding>${project.encoding}</encoding>
 					<optimize>true</optimize>
 					<debug>true</debug>
 					<showDeprecation>true</showDeprecation>
@@ -255,9 +254,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<configuration>
-					<encoding>${project.encoding}</encoding>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -328,7 +324,6 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
 							<source>1.6</source>
-							<encoding>${project.encoding}</encoding>
 							<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
 							<docletArtifact>
 								<groupId>org.umlgraph</groupId>

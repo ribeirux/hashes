@@ -15,6 +15,7 @@
  */
 package org.hashes.collision;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.testng.Assert;
@@ -35,18 +36,20 @@ public class CollisionAlgorithmTestBase {
      * @param algorithm collision generator algorithm
      * @param forceNew forces the generation of new keys instead of using pre-built
      */
-    public void testCollisionGeneratorAlgorithm(final AbstractCollisionAlgorithm algorithm,
-            final boolean forceNew) {
+    public void testCollisionGeneratorAlgorithm(final AbstractCollisionAlgorithm algorithm, final boolean forceNew) {
 
         final List<String> collisions = algorithm.generateCollisions(NUMBER_OF_KEYS, forceNew);
 
         Assert.assertEquals(collisions.size(), NUMBER_OF_KEYS);
 
-        final int hash = algorithm.hash(collisions.get(0));
+        // detect duplicates
+        HashSet<String> set = new HashSet<String>(collisions);
+        Assert.assertEquals(collisions.size(), set.size());
 
+        // validate hash code
+        final int hash = algorithm.hash(collisions.get(0));
         for (final String key : collisions) {
             Assert.assertEquals(algorithm.hash(key), hash);
         }
     }
-
 }
