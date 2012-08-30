@@ -13,28 +13,17 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.hashes.collision;
+package org.hashes.algorithm;
 
 import com.google.common.base.Preconditions;
 
 /**
- * DJBX33X hash collision algorithm.
+ * DJBX33X hash algorithm.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public class DJBX33XCollisionAlgorithm extends AbstractMITMAlgorithm {
-
-    private static final String PRE_BUILT_FILE_NAME = "asp.txt";
-
-    /**
-     * Creates a new instance with specified seed.
-     * 
-     * @param seed MITM seed
-     */
-    public DJBX33XCollisionAlgorithm(final String seed) {
-        super(seed);
-    }
+public class DJBX33XHashAlgorithm implements HashAlgorithm {
 
     @Override
     public int hash(final String key) {
@@ -48,19 +37,4 @@ public class DJBX33XCollisionAlgorithm extends AbstractMITMAlgorithm {
         return hash;
     }
 
-    @Override
-    protected int hashBack(final String key, final int hash) {
-        int result = hash;
-
-        for (int i = key.length(); i > 0; i--) {
-            result = (result ^ key.charAt(i - 1)) * 1041204193;
-        }
-
-        return result;
-    }
-
-    @Override
-    protected String getPreBuiltCollisionsFileName() {
-        return PRE_BUILT_FILE_NAME;
-    }
 }

@@ -15,47 +15,34 @@
  */
 package org.hashes.collision;
 
+import org.hashes.algorithm.V8HashAlgorithm;
+
 import com.google.common.base.Preconditions;
 
 /**
- * Google V8 hash collision algorithm.
+ * V8 hash collision generator.
  * <p>
  * Based on: https://github.com/hastebrot/V8-Hash-Collision-Generator
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public class V8CollisionAlgorithm extends AbstractMITMAlgorithm {
-
-    private static final String PRE_BUILT_FILE_NAME = "v8.txt";
+public class V8CollisionGenerator extends AbstractMITMGenerator {
 
     /**
      * Creates a new instance with specified seed.
      * 
      * @param seed MITM seed
      */
-    public V8CollisionAlgorithm(final String seed) {
-        super(seed);
+    public V8CollisionGenerator(final String seed) {
+        super(new V8HashAlgorithm(), seed);
     }
 
     @Override
-    public int hash(final String key) {
+    public int hashBack(final String key, final int hash) {
         Preconditions.checkNotNull(key, "key");
 
-        int hash = 0;
-        for (int i = 0; i < key.length(); i++) {
-            hash += key.charAt(i);
-            hash += (hash << 10);
-            hash ^= (hash >>> 6);
-        }
-
-        return hash;
-    }
-
-    @Override
-    protected int hashBack(final String key, final int hash) {
         int result = hash;
-
         for (int i = key.length() - 1; i >= 0; i--) {
             final int part1 = result >>> 26 << 26;
             final int part2 = (result ^ (part1 >>> 6)) >>> 20 << 26 >>> 6;
@@ -68,11 +55,6 @@ public class V8CollisionAlgorithm extends AbstractMITMAlgorithm {
         }
 
         return result;
-
     }
 
-    @Override
-    protected String getPreBuiltCollisionsFileName() {
-        return PRE_BUILT_FILE_NAME;
-    }
 }

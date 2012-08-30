@@ -143,7 +143,7 @@ public final class FileUtils {
         final InputStream prebuilt = FileUtils.lookupFile(fileName);
         final BufferedReader reader = new BufferedReader(new InputStreamReader(prebuilt, charset));
 
-        Builder<String> lines = ImmutableList.builder();
+        final Builder<String> lines = ImmutableList.builder();
 
         try {
             String line = reader.readLine();

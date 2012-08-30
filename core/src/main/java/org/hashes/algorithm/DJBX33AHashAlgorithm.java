@@ -13,30 +13,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.hashes.collision;
+package org.hashes.algorithm;
 
-import org.testng.annotations.Test;
+import com.google.common.base.Preconditions;
 
 /**
- * DJBX33A hash collision algorithm test.
+ * DJBX33A hash algorithm.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-@Test(groups = "functional", testName = "collision.DJBX33ACollisionAlgorithmTest")
-public class DJBX33ACollisionAlgorithmTest extends CollisionAlgorithmTestBase {
+public class DJBX33AHashAlgorithm implements HashAlgorithm {
 
-    /**
-     * Test DJBX33A hash collision algorithm.
-     */
-    public void testDJBX33A() {
-        this.testCollisionGeneratorAlgorithm(new DJBX33ACollisionAlgorithm(), true);
+    @Override
+    public int hash(final String key) {
+        Preconditions.checkNotNull(key, "key");
+        int hash = 5381;
+        for (int i = 0; i < key.length(); i++) {
+            hash = ((hash << 5) + hash) + key.charAt(i);
+        }
+
+        return hash;
     }
 
-    /**
-     * Test DJBX33A pre-built hash collisions.
-     */
-    public void testPreBuiltDJBX33A() {
-        this.testCollisionGeneratorAlgorithm(new DJBX33ACollisionAlgorithm(), false);
-    }
 }

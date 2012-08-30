@@ -34,9 +34,9 @@ public enum Protocol {
      */
     HTTPS("https", 443);
 
-    private String schemeName;
+    private final String schemeName;
 
-    private int defaultPort;
+    private final int defaultPort;
 
     private Protocol(final String schemeName, final int defaultPort) {
         this.schemeName = schemeName;

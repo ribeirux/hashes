@@ -13,32 +13,22 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.hashes.collision;
-
-import org.testng.annotations.Test;
+package org.hashes.algorithm;
 
 /**
- * V8 hash collision algorithm tests.
+ * Hash algorithm.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-@Test(groups = "functional", testName = "collision.V8CollisionAlgorithmTest")
-public class V8CollisionAlgorithmTest extends CollisionAlgorithmTestBase {
-
-    private static final String SEED = "hashes";
+public interface HashAlgorithm {
 
     /**
-     * Test V8 hash collision algorithm.
+     * Computes the hash code of the specified key.
+     * 
+     * @param key the key to compute the hash code
+     * @return the hash code
      */
-    public void testV8() {
-        this.testCollisionGeneratorAlgorithm(new V8CollisionAlgorithm(SEED), true);
-    }
+    int hash(String key);
 
-    /**
-     * Test V8 pre-built hash collisions.
-     */
-    public void testPreBuiltV8() {
-        this.testCollisionGeneratorAlgorithm(new V8CollisionAlgorithm(SEED), false);
-    }
 }

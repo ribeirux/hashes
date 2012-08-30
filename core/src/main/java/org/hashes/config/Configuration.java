@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.hashes.collision.AbstractCollisionAlgorithm;
-import org.hashes.collision.DJBX33ACollisionAlgorithm;
+import org.hashes.collision.AbstractCollisionGenerator;
+import org.hashes.collision.DJBX33ACollisionGenerator;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -48,7 +48,7 @@ public final class Configuration {
     // optional
     private final String path;
 
-    private final AbstractCollisionAlgorithm collisionGenerator;
+    private final AbstractCollisionGenerator collisionGenerator;
 
     private final File collisionsFile;
 
@@ -86,7 +86,7 @@ public final class Configuration {
 
         private String path = "/";
 
-        private AbstractCollisionAlgorithm collisionGenerator = new DJBX33ACollisionAlgorithm();
+        private AbstractCollisionGenerator collisionGenerator = new DJBX33ACollisionGenerator();
 
         private File collisionsFile = null;
 
@@ -111,7 +111,7 @@ public final class Configuration {
          */
         public ConfigurationBuilder(final String hostname) {
             this.hostname = Preconditions.checkNotNull(hostname, "hostname");
-            headers = createDefaultHeaders();
+            this.headers = this.createDefaultHeaders();
         }
 
         private Map<String, String> createDefaultHeaders() {
@@ -133,8 +133,8 @@ public final class Configuration {
          */
         public ConfigurationBuilder withSchemeName(final String schemeName) {
             Preconditions.checkNotNull(schemeName, "schemeName");
-            protocol = Protocol.fromSchemeName(schemeName.toLowerCase(locale));
-            port = protocol.getDefaultPort();
+            this.protocol = Protocol.fromSchemeName(schemeName.toLowerCase(this.locale));
+            this.port = this.protocol.getDefaultPort();
 
             return this;
         }
@@ -171,7 +171,7 @@ public final class Configuration {
          * @param collisionGenerator the collision generator algorithm.
          * @return the configuration builder
          */
-        public ConfigurationBuilder withCollisionGenerator(final AbstractCollisionAlgorithm collisionGenerator) {
+        public ConfigurationBuilder withCollisionGenerator(final AbstractCollisionGenerator collisionGenerator) {
             this.collisionGenerator = Preconditions.checkNotNull(collisionGenerator, "collisionGenerator");
 
             return this;
@@ -199,7 +199,7 @@ public final class Configuration {
          * @return the configuration builder.
          */
         public ConfigurationBuilder waitForResponse() {
-            waitResponse = true;
+            this.waitResponse = true;
 
             return this;
         }
@@ -210,7 +210,7 @@ public final class Configuration {
          * @return the configuration builder.
          */
         public ConfigurationBuilder generateNewKeys() {
-            generateNewKeys = true;
+            this.generateNewKeys = true;
 
             return this;
         }
@@ -294,8 +294,8 @@ public final class Configuration {
          * @return the configuration builder
          */
         public ConfigurationBuilder withHTTPHeader(final String key, final String value) {
-            headers.put(//
-                    Preconditions.checkNotNull(key, "key").toLowerCase(locale), //
+            this.headers.put(//
+                    Preconditions.checkNotNull(key, "key").toLowerCase(this.locale), //
                     Preconditions.checkNotNull(value, "value"));
 
             return this;
@@ -313,18 +313,18 @@ public final class Configuration {
     }
 
     private Configuration(final ConfigurationBuilder builder) {
-        charset = builder.charset;
-        locale = builder.locale;
-        headers = new ImmutableMap.Builder<String, String>().putAll(builder.headers).build();
-        path = builder.path;
-        collisionGenerator = builder.collisionGenerator;
-        collisionsFile = builder.collisionsFile;
-        waitResponse = builder.waitResponse;
-        generateNewKeys = builder.generateNewKeys;
-        numberOfKeys = builder.numberOfKeys;
-        requestsPerClient = builder.requestsPerClient;
-        numberOfClients = builder.numberOfClients;
-        target = new HttpHost(builder.protocol, builder.hostname, builder.port, builder.connectTimeout,
+        this.charset = builder.charset;
+        this.locale = builder.locale;
+        this.headers = new ImmutableMap.Builder<String, String>().putAll(builder.headers).build();
+        this.path = builder.path;
+        this.collisionGenerator = builder.collisionGenerator;
+        this.collisionsFile = builder.collisionsFile;
+        this.waitResponse = builder.waitResponse;
+        this.generateNewKeys = builder.generateNewKeys;
+        this.numberOfKeys = builder.numberOfKeys;
+        this.requestsPerClient = builder.requestsPerClient;
+        this.numberOfClients = builder.numberOfClients;
+        this.target = new HttpHost(builder.protocol, builder.hostname, builder.port, builder.connectTimeout,
                 builder.readTimeout);
     }
 
@@ -334,7 +334,7 @@ public final class Configuration {
      * @return the charset property
      */
     public Charset getCharset() {
-        return charset;
+        return this.charset;
     }
 
     /**
@@ -343,7 +343,7 @@ public final class Configuration {
      * @return the locale property
      */
     public Locale getLocale() {
-        return locale;
+        return this.locale;
     }
 
     /**
@@ -352,7 +352,7 @@ public final class Configuration {
      * @return the target property
      */
     public HttpHost getTarget() {
-        return target;
+        return this.target;
     }
 
     /**
@@ -361,7 +361,7 @@ public final class Configuration {
      * @return the headers property
      */
     public Map<String, String> getHeaders() {
-        return headers;
+        return this.headers;
     }
 
     /**
@@ -370,7 +370,7 @@ public final class Configuration {
      * @return the path property
      */
     public String getPath() {
-        return path;
+        return this.path;
     }
 
     /**
@@ -378,8 +378,8 @@ public final class Configuration {
      * 
      * @return the collisionGenerator property
      */
-    public AbstractCollisionAlgorithm getCollisionGenerator() {
-        return collisionGenerator;
+    public AbstractCollisionGenerator getCollisionGenerator() {
+        return this.collisionGenerator;
     }
 
     /**
@@ -388,7 +388,7 @@ public final class Configuration {
      * @return the collisionsFile property
      */
     public File getCollisionsFile() {
-        return collisionsFile;
+        return this.collisionsFile;
     }
 
     /**
@@ -397,7 +397,7 @@ public final class Configuration {
      * @return the waitResponse property
      */
     public boolean isWaitResponse() {
-        return waitResponse;
+        return this.waitResponse;
     }
 
     /**
@@ -406,7 +406,7 @@ public final class Configuration {
      * @return the generateNewKeys property
      */
     public boolean isGenerateNewKeys() {
-        return generateNewKeys;
+        return this.generateNewKeys;
     }
 
     /**
@@ -415,7 +415,7 @@ public final class Configuration {
      * @return the numberOfKeys property
      */
     public int getNumberOfKeys() {
-        return numberOfKeys;
+        return this.numberOfKeys;
     }
 
     /**
@@ -424,7 +424,7 @@ public final class Configuration {
      * @return the requestsPerClient property
      */
     public int getRequestsPerClient() {
-        return requestsPerClient;
+        return this.requestsPerClient;
     }
 
     /**
@@ -433,6 +433,6 @@ public final class Configuration {
      * @return the numberOfClients property
      */
     public int getNumberOfClients() {
-        return numberOfClients;
+        return this.numberOfClients;
     }
 }

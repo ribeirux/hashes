@@ -18,14 +18,16 @@ package org.hashes.collision;
 import java.util.HashSet;
 import java.util.List;
 
+import org.hashes.algorithm.HashAlgorithm;
 import org.testng.Assert;
 
 /**
- * Base class for collision algorithm tests.
+ * Base class for collision generation tests.
  * 
  * @author pedroribeiro
+ * @version $Revision$
  */
-public class CollisionAlgorithmTestBase {
+public class CollisionGeneratorTestBase {
 
     // higher than 0
     private static final int NUMBER_OF_KEYS = 1000;
@@ -36,20 +38,21 @@ public class CollisionAlgorithmTestBase {
      * @param algorithm collision generator algorithm
      * @param forceNew forces the generation of new keys instead of using pre-built
      */
-    public void testCollisionGeneratorAlgorithm(final AbstractCollisionAlgorithm algorithm, final boolean forceNew) {
+    public void testCollisionGenerator(final AbstractCollisionGenerator algorithm, final boolean forceNew) {
 
         final List<String> collisions = algorithm.generateCollisions(NUMBER_OF_KEYS, forceNew);
 
         Assert.assertEquals(collisions.size(), NUMBER_OF_KEYS);
 
         // detect duplicates
-        HashSet<String> set = new HashSet<String>(collisions);
+        final HashSet<String> set = new HashSet<String>(collisions);
         Assert.assertEquals(collisions.size(), set.size());
 
         // validate hash code
-        final int hash = algorithm.hash(collisions.get(0));
+        final HashAlgorithm hashAlgorithm = algorithm.getHashAlgorithm();
+        final int hash = hashAlgorithm.hash(collisions.get(0));
         for (final String key : collisions) {
-            Assert.assertEquals(algorithm.hash(key), hash);
+            Assert.assertEquals(hashAlgorithm.hash(key), hash);
         }
     }
 }

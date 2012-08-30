@@ -32,6 +32,7 @@ import com.google.common.collect.ImmutableList;
  * File utils tests.
  * 
  * @author ribeirux
+ * @version $Revision$
  */
 @Test(groups = "functional", testName = "util.FileUtilsTest")
 public class FileUtilsTest {
@@ -39,7 +40,7 @@ public class FileUtilsTest {
     private static final String RESOURCES_FOLDER = new StringBuilder().append("src").append(File.separator)
             .append("test").append(File.separator).append("resources").append(File.separator).toString();
 
-    private static final String FILE = "java.txt";
+    private static final String FILE = "DJBX31A.txt";
 
     private static final String NO_FILE = "268c41b9-078a-4196-8bbf-3ddb1a416e82.txt";
 
@@ -58,7 +59,7 @@ public class FileUtilsTest {
             if (input != null) {
                 try {
                     input.close();
-                } catch (IOException e) {}
+                } catch (final IOException e) {}
             }
         }
     }
@@ -79,7 +80,7 @@ public class FileUtilsTest {
             if (input != null) {
                 try {
                     input.close();
-                } catch (IOException e) {}
+                } catch (final IOException e) {}
             }
         }
     }
@@ -99,7 +100,7 @@ public class FileUtilsTest {
             if (input != null) {
                 try {
                     input.close();
-                } catch (IOException e) {}
+                } catch (final IOException e) {}
             }
         }
     }
@@ -111,11 +112,11 @@ public class FileUtilsTest {
      */
     public void testWriteAndReadLines() throws Exception {
 
-        Charset charset = Charsets.UTF_8;
+        final Charset charset = Charsets.UTF_8;
 
-        File tempFile = File.createTempFile("FileUtils", "testWriteLines");
+        final File tempFile = File.createTempFile("FileUtils", "testWriteLines");
 
-        List<String> write = ImmutableList.of(//
+        final List<String> write = ImmutableList.of(//
                 "xwxwxwxwxwxwxwxwxwxwxw", //
                 "xwxwxwxwxwxwxwxwxwxwyX", //
                 "xwxwxwxwxwxwxwxwxwxwz9", //
@@ -124,7 +125,7 @@ public class FileUtilsTest {
 
         FileUtils.writeLines(tempFile, write, charset);
 
-        List<String> read = FileUtils.readLines(tempFile.getPath(), write.size(), charset);
+        final List<String> read = FileUtils.readLines(tempFile.getPath(), write.size(), charset);
 
         Assert.assertEquals(write, read);
     }

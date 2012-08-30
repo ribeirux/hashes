@@ -82,7 +82,7 @@ public class CollisionInjector {
         final byte[] payload = this.buildPayload(collisions);
 
         final int numberOfClients = this.configuration.getNumberOfClients();
-        Builder<Runnable> clients = ImmutableList.builder();
+        final Builder<Runnable> clients = ImmutableList.builder();
 
         for (int i = 0; i < numberOfClients; i++) {
             clients.add(this.createClient(payload));

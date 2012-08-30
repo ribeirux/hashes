@@ -18,27 +18,27 @@ package org.hashes.collision;
 import org.testng.annotations.Test;
 
 /**
- * DJBX33X hash collision algorithm tests.
+ * V8 hash collision generator tests.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-@Test(groups = "functional", testName = "collision.DJBX33XCollisionAlgorithmTest")
-public class DJBX33XCollisionAlgorithmTest extends CollisionAlgorithmTestBase {
+@Test(groups = "functional", testName = "collision.V8CollisionGeneratorTest")
+public class V8CollisionGeneratorTest extends CollisionGeneratorTestBase {
 
     private static final String SEED = "hashes";
 
     /**
-     * Test DJBX33X hash collision algorithm.
+     * Test V8 hash collision algorithm.
      */
-    public void testDJBX33X() {
-        this.testCollisionGeneratorAlgorithm(new DJBX33XCollisionAlgorithm(SEED), true);
+    public void testV8() {
+        this.testCollisionGenerator(new V8CollisionGenerator(SEED), true);
     }
 
     /**
-     * Test DJBX33X pre-built hash collisions.
+     * Test V8 pre-built hash collisions.
      */
-    public void testPreBuiltDJBX33X() {
-        this.testCollisionGeneratorAlgorithm(new DJBX33XCollisionAlgorithm(SEED), false);
+    public void testPreBuiltV8() {
+        this.testCollisionGenerator(new V8CollisionGenerator(SEED), false);
     }
 }

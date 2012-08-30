@@ -13,42 +13,30 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.hashes.collision;
-
-import java.util.List;
+package org.hashes.algorithm;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 /**
- * DJBX33A hash collision algorithm.
+ * V8 hash algorithm.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public class DJBX33ACollisionAlgorithm extends AbstractEquivalentSubstringsAlgorithm {
-
-    private static final String PRE_BUILT_FILE_NAME = "php.txt";
+public class V8HashAlgorithm implements HashAlgorithm {
 
     @Override
     public int hash(final String key) {
         Preconditions.checkNotNull(key, "key");
 
-        int hash = 5381;
+        int hash = 0;
         for (int i = 0; i < key.length(); i++) {
-            hash = ((hash << 5) + hash) + key.charAt(i);
+            hash += key.charAt(i);
+            hash += (hash << 10);
+            hash ^= (hash >>> 6);
         }
 
         return hash;
     }
 
-    @Override
-    protected List<String> buildSeed() {
-        return ImmutableList.of("Ez", "FY", "G8");
-    }
-
-    @Override
-    protected String getPreBuiltCollisionsFileName() {
-        return PRE_BUILT_FILE_NAME;
-    }
 }

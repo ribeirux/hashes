@@ -15,6 +15,7 @@
  */
 package org.hashes.collision;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,19 +27,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.hashes.algorithm.HashAlgorithm;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
 /**
- * Base class of meet in the middle hash collision algorithm.
+ * Base class of meet in the middle hash collision generator.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public abstract class AbstractMITMAlgorithm extends AbstractCollisionAlgorithm {
+public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
 
-    private static final int DICTIONARY_SIZE = (int) Math.pow(2, 18);
+    private static final int LOOKUP_MAP_SIZE = (int) Math.pow(2, 18);
+
+    private static final int LOOKUP_MAP_KEY_SIZE = 3;
 
     private static final int KEY_SIZE = 7;
 
@@ -51,11 +56,13 @@ public abstract class AbstractMITMAlgorithm extends AbstractCollisionAlgorithm {
     private final String seed;
 
     /**
-     * Creates a new instance with specified seed.
+     * Creates a new instance with specified hash algorithm and seed.
      * 
+     * @param hashAlgorithm the hash algorithm
      * @param seed MITM seed
      */
-    public AbstractMITMAlgorithm(final String seed) {
+    public AbstractMITMGenerator(final HashAlgorithm hashAlgorithm, final String seed) {
+        super(hashAlgorithm);
         this.seed = Preconditions.checkNotNull(seed, "seed");
     }
 
@@ -63,12 +70,9 @@ public abstract class AbstractMITMAlgorithm extends AbstractCollisionAlgorithm {
     public List<String> generateCollisions(final int numberOfKeys) {
         Preconditions.checkArgument(numberOfKeys > 0, "numberOfKeys");
 
-        final int hash = this.hash(this.seed);
-
-        final Map<Integer, String> dictionary = this.createDictionary(hash);
-
-        final List<Callable<List<String>>> tasks = this.buildTasks(dictionary, numberOfKeys);
-
+        final int hash = this.getHashAlgorithm().hash(this.seed);
+        final Map<Integer, String> lookupMap = this.createLookupMap(hash);
+        final List<Callable<List<String>>> tasks = this.buildTasks(lookupMap, numberOfKeys);
         final ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
 
         try {
@@ -80,7 +84,7 @@ public abstract class AbstractMITMAlgorithm extends AbstractCollisionAlgorithm {
                 executor.shutdown();
             }
 
-            Builder<String> collisions = ImmutableList.builder();
+            final Builder<String> collisions = ImmutableList.builder();
             for (final Future<List<String>> future : results) {
                 collisions.addAll(future.get());
             }
@@ -91,27 +95,26 @@ public abstract class AbstractMITMAlgorithm extends AbstractCollisionAlgorithm {
         }
     }
 
-    private Map<Integer, String> createDictionary(final int hash) {
-        final Map<Integer, String> dictionary = new HashMap<Integer, String>(DICTIONARY_SIZE);
-
-        for (int i = 0; i < DICTIONARY_SIZE; i++) {
-            final String sufix = this.randomString(3);
-            dictionary.put(this.hashBack(sufix, hash), sufix);
+    private Map<Integer, String> createLookupMap(final int hash) {
+        final Map<Integer, String> lookupMap = new HashMap<Integer, String>(LOOKUP_MAP_SIZE);
+        for (int i = 0; i < LOOKUP_MAP_SIZE; i++) {
+            final String sufix = this.randomString(LOOKUP_MAP_KEY_SIZE);
+            lookupMap.put(this.hashBack(sufix, hash), sufix);
         }
 
-        return Collections.unmodifiableMap(dictionary);
+        return Collections.unmodifiableMap(lookupMap);
     }
 
     private String randomString(final int size) {
-        final StringBuilder builder = new StringBuilder(size);
+        final char[] random = new char[size];
         for (int i = 0; i < size; i++) {
-            builder.append((char) (Math.random() * (END_KEY - START_KEY + 1) + START_KEY));
+            random[i] = (char) (Math.random() * (END_KEY - START_KEY + 1) + START_KEY);
         }
 
-        return builder.toString();
+        return String.valueOf(random);
     }
 
-    private List<Callable<List<String>>> buildTasks(final Map<Integer, String> dictionary, final int size) {
+    private List<Callable<List<String>>> buildTasks(final Map<Integer, String> lookupMap, final int size) {
 
         final int range = END_KEY - START_KEY + 1;
         final int maxWorkers = Math.min(range, Runtime.getRuntime().availableProcessors());
@@ -119,17 +122,26 @@ public abstract class AbstractMITMAlgorithm extends AbstractCollisionAlgorithm {
 
         final AtomicLong keyCounter = new AtomicLong();
 
-        Builder<Callable<List<String>>> tasks = ImmutableList.builder();
+        final Builder<Callable<List<String>>> tasks = ImmutableList.builder();
 
         for (int i = 0; i < maxWorkers; i++) {
             final char start = (char) (i * interval + START_KEY);
             final char end = (i == maxWorkers - 1 ? END_KEY : (char) (start + interval - 1));
 
-            tasks.add(new MITMWorker(start, end, keyCounter, size, dictionary));
+            tasks.add(new MITMWorker(start, end, keyCounter, size, lookupMap, this.getHashAlgorithm()));
         }
 
         return tasks.build();
     }
+
+    /**
+     * Hash backwards.
+     * 
+     * @param key key to hash backwards
+     * @param end final hash code
+     * @return the backwards hash code
+     */
+    protected abstract int hashBack(final String key, final int end);
 
     /**
      * Meet in the middle hash collision worker.
@@ -137,7 +149,7 @@ public abstract class AbstractMITMAlgorithm extends AbstractCollisionAlgorithm {
      * @author ribeirux
      * @version $Revision$
      */
-    private class MITMWorker implements Callable<List<String>> {
+    private static class MITMWorker implements Callable<List<String>> {
 
         private final char start;
 
@@ -147,49 +159,48 @@ public abstract class AbstractMITMAlgorithm extends AbstractCollisionAlgorithm {
 
         private final long maxNumberOfKeys;
 
-        private final Map<Integer, String> dictionary;
+        private final Map<Integer, String> lookupMap;
+
+        private final HashAlgorithm hashAlgorithm;
 
         public MITMWorker(final char start, final char end, final AtomicLong keyCounter, final int maxNumberOfKeys,
-                final Map<Integer, String> dictionary) {
+                final Map<Integer, String> lookupMap, final HashAlgorithm hashAlgorithm) {
             this.start = start;
             this.end = end;
             this.keyCounter = keyCounter;
             this.maxNumberOfKeys = maxNumberOfKeys;
-            this.dictionary = dictionary;
+            this.lookupMap = lookupMap;
+            this.hashAlgorithm = hashAlgorithm;
         }
 
         @Override
         public List<String> call() {
             final List<String> collisions = new LinkedList<String>();
-            this.crack("", this.start, this.end, collisions);
+
+            // use char array instead of String, to improve performance
+            this.crack(new char[KEY_SIZE], 0, this.start, this.end, collisions);
 
             return collisions;
         }
 
-        private void crack(final String prefix, final char startChar, final char endChar, final List<String> collisions) {
-
-            if (prefix.length() == KEY_SIZE) {
-                final String precomp = this.dictionary.get(AbstractMITMAlgorithm.this.hash(prefix));
+        private void crack(final char[] prefix, final int prefixIndex, final char startChar, final char endChar,
+                final List<String> collisions) {
+            if (prefixIndex == KEY_SIZE) {
+                final String key = String.valueOf(prefix);
+                final String precomp = this.lookupMap.get(this.hashAlgorithm.hash(key));
                 if (precomp != null) {
                     final long currentValue = this.keyCounter.getAndIncrement();
                     if (currentValue < this.maxNumberOfKeys) {
-                        collisions.add(prefix + precomp);
+                        collisions.add(key + precomp);
                     }
                 }
             } else {
                 for (char i = startChar; (i <= endChar) && (this.maxNumberOfKeys > this.keyCounter.get()); i++) {
-                    this.crack(prefix + i, START_KEY, END_KEY, collisions);
+                    final char[] newPrefix = Arrays.copyOf(prefix, prefix.length);
+                    newPrefix[prefixIndex] = i;
+                    this.crack(newPrefix, prefixIndex + 1, START_KEY, END_KEY, collisions);
                 }
             }
         }
     }
-
-    /**
-     * Compute the hash back code from the key.
-     * 
-     * @param key the key to hash back
-     * @param hash seed hash code
-     * @return the hash back code
-     */
-    protected abstract int hashBack(final String key, final int hash);
 }

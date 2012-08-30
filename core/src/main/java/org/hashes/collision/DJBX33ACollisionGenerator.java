@@ -15,29 +15,29 @@
  */
 package org.hashes.collision;
 
-import org.testng.annotations.Test;
+import java.util.List;
+
+import org.hashes.algorithm.DJBX33AHashAlgorithm;
+
+import com.google.common.collect.ImmutableList;
 
 /**
- * DJBX31A hash collision algorithm test.
+ * DJBX33A hash collision generator.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-@Test(groups = "functional", testName = "collision.DJBX31ACollisionAlgorithmTest")
-public class DJBX31ACollisionAlgorithmTest extends CollisionAlgorithmTestBase {
+public class DJBX33ACollisionGenerator extends AbstractEquivalentSubstringsGenerator {
 
     /**
-     * Test DJBX31A hash collision algorithm.
+     * Creates a new instace.
      */
-    public void testDJBX31A() {
-        this.testCollisionGeneratorAlgorithm(new DJBX31ACollisionAlgorithm(), true);
+    public DJBX33ACollisionGenerator() {
+        super(new DJBX33AHashAlgorithm());
     }
 
-    /**
-     * Test DJBX31A pre-built hash collisions.
-     */
-    public void testPreBuiltDJBX31A() {
-        this.testCollisionGeneratorAlgorithm(new DJBX31ACollisionAlgorithm(), false);
+    @Override
+    protected List<String> buildSeed() {
+        return ImmutableList.of("Ez", "FY", "G8");
     }
-
 }

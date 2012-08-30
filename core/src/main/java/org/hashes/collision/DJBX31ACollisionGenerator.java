@@ -17,33 +17,27 @@ package org.hashes.collision;
 
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import org.hashes.algorithm.DJBX31AHashAlgorithm;
+
 import com.google.common.collect.ImmutableList;
 
 /**
- * DJBX33A hash collision algorithm.
+ * DJBX31A hash collision generator.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public class DJBX31ACollisionAlgorithm extends AbstractEquivalentSubstringsAlgorithm {
+public class DJBX31ACollisionGenerator extends AbstractEquivalentSubstringsGenerator {
 
-    private static final String PRE_BUILT_FILE_NAME = "java.txt";
-
-    @Override
-    public int hash(final String key) {
-        Preconditions.checkNotNull(key, "key");
-
-        return key.hashCode();
+    /**
+     * Creates a new instance.
+     */
+    public DJBX31ACollisionGenerator() {
+        super(new DJBX31AHashAlgorithm());
     }
 
     @Override
     protected List<String> buildSeed() {
         return ImmutableList.of("xw", "yX", "z9");
-    }
-
-    @Override
-    protected String getPreBuiltCollisionsFileName() {
-        return PRE_BUILT_FILE_NAME;
     }
 }

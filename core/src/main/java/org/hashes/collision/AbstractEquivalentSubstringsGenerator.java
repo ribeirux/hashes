@@ -19,15 +19,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.hashes.algorithm.HashAlgorithm;
+
 import com.google.common.base.Preconditions;
 
 /**
- * Base class of equivalent substrings collision algorithm.
+ * Base class of equivalent substrings hash collision generator.
  * 
  * @author ribeirux
  * @version $Revision$
  */
-public abstract class AbstractEquivalentSubstringsAlgorithm extends AbstractCollisionAlgorithm {
+public abstract class AbstractEquivalentSubstringsGenerator extends AbstractCollisionGenerator {
+
+    /**
+     * Initializes the hash algorithm.
+     * 
+     * @param hashAlgorithm the hash algorithm
+     */
+    public AbstractEquivalentSubstringsGenerator(final HashAlgorithm hashAlgorithm) {
+        super(hashAlgorithm);
+    }
 
     @Override
     public List<String> generateCollisions(final int numberOfKeys) {
@@ -52,7 +63,7 @@ public abstract class AbstractEquivalentSubstringsAlgorithm extends AbstractColl
         if (iterations == 0) {
             result.add(combination);
         } else {
-            for (String entry : seed) {
+            for (final String entry : seed) {
                 if (result.size() < numberOfKeys) {
                     this.buildCombinations(seed, iterations - 1, combination + entry, numberOfKeys, result);
                 } else {

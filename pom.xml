@@ -56,9 +56,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<copyright.owner>Pedro Ribeiro</copyright.owner>
-		<copyright.year>2012</copyright.year>
-		<license.header>${basedir}/etc/header.txt</license.header>
 	</properties>
 
 	<repositories>
@@ -101,17 +98,12 @@
 	</pluginRepositories>
 
 	<dependencyManagement>
+		<!-- External dependencies -->
 		<dependencies>
 			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>1.1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.testng</groupId>
-				<artifactId>testng</artifactId>
-				<version>6.5.2</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>
@@ -150,6 +142,14 @@
 				<groupId>org.hashes</groupId>
 				<artifactId>hashes-dist</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Test dependencies -->
+			<dependency>
+				<groupId>org.testng</groupId>
+				<artifactId>testng</artifactId>
+				<version>6.5.2</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -278,7 +278,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>2.5.2</version>
 				<configuration>
 					<onlyAnalyze>org.hashes.*</onlyAnalyze>
 				</configuration>
