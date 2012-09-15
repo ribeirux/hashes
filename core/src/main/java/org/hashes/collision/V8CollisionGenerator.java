@@ -38,6 +38,16 @@ public class V8CollisionGenerator extends AbstractMITMGenerator {
         super(new V8HashAlgorithm(), seed);
     }
 
+    /**
+     * Creates a new instance with specified seed.
+     * 
+     * @param seed MITM seed
+     * @param workerThreads number of worker threads, If null the number of available processors is used
+     */
+    public V8CollisionGenerator(final String seed, final Integer workerThreads) {
+        super(new V8HashAlgorithm(), seed, workerThreads);
+    }
+
     @Override
     public int hashBack(final String key, final int hash) {
         Preconditions.checkNotNull(key, "key");

@@ -37,24 +37,26 @@ public enum CliOption {
      * PHP
      */
     @SuppressWarnings("static-access")
-    PHP(OptionBuilder.withDescription("Build PHP payload (default ON)").withLongOpt("php").create("p")),
+    PHP(OptionBuilder.withDescription("Build PHP payload using equivalent substrings algorithm (default ON)")
+            .withLongOpt("php").create("p")),
     /**
      * JAVA
      */
     @SuppressWarnings("static-access")
-    JAVA(OptionBuilder.withDescription("Build JAVA payload (default OFF)").withLongOpt("java").create("j")),
+    JAVA(OptionBuilder.withDescription("Build JAVA payload using equivalent substrings algorithm (default OFF)")
+            .withLongOpt("java").create("j")),
     /**
      * ASP
      */
     @SuppressWarnings("static-access")
-    ASP(OptionBuilder.withDescription("Build ASP payload (default OFF)").hasOptionalArg().withArgName("seed")
-            .withType(String.class).withLongOpt("asp").create("a")),
+    ASP(OptionBuilder.withDescription("Build ASP payload using MITM algorithm (default OFF)").hasOptionalArg()
+            .withArgName("seed").withType(String.class).withLongOpt("asp").create("a")),
     /**
      * V8
      */
     @SuppressWarnings("static-access")
-    V8(OptionBuilder.withDescription("Build V8 payload (default OFF)").hasOptionalArg().withArgName("seed")
-            .withType(String.class).withLongOpt("v8").create("g")),
+    V8(OptionBuilder.withDescription("Build V8 payload using MITM algorithm (default OFF)").hasOptionalArg()
+            .withArgName("seed").withType(String.class).withLongOpt("v8").create("g")),
     /**
      * Save keys
      */
@@ -76,33 +78,40 @@ public enum CliOption {
      * Keys
      */
     @SuppressWarnings("static-access")
-    KEYS(OptionBuilder.withDescription("Number of keys to inject per request (default 85000)").hasArg()
+    KEYS(OptionBuilder.withDescription("Number of keys to inject per request (default: 85000)").hasArg()
             .withArgName("keys").withType(Number.class).withLongOpt("keys").create("k")),
     /**
      * Number of requests per client
      */
     @SuppressWarnings("static-access")
-    REQUESTS(OptionBuilder.withDescription("Number of requests to submit per client (default 1)").hasArg()
+    REQUESTS(OptionBuilder.withDescription("Number of requests to submit per client (default: 1)").hasArg()
             .withArgName("requests").withType(Number.class).withLongOpt("requests").create("r")),
     /**
      * Number of clients
      */
     @SuppressWarnings("static-access")
-    CLIENTS(OptionBuilder.withDescription("Number of clients to run (default 1)").hasArg().withArgName("clients")
+    CLIENTS(OptionBuilder.withDescription("Number of clients to run (default: 1)").hasArg().withArgName("clients")
             .withType(Number.class).withLongOpt("clients").create("c")),
     /**
      * Connection timeout in seconds
      */
     @SuppressWarnings("static-access")
     CONNECTION_TIMEOUT(OptionBuilder
-            .withDescription("Connection timeout in seconds, zero to disable timeout (default 60)").hasArg()
+            .withDescription("Connection timeout in seconds, zero to disable timeout (default: 60)").hasArg()
             .withArgName("timeout").withType(Number.class).withLongOpt("connection-timeout").create("b")),
     /**
      * Read timeout in seconds
      */
     @SuppressWarnings("static-access")
-    READ_TIMEOUT(OptionBuilder.withDescription("Read timeout in seconds, zero to disable timeout (default 60)")
-            .hasArg().withArgName("timeout").withType(Number.class).withLongOpt("read-timeout").create("d"));
+    READ_TIMEOUT(OptionBuilder.withDescription("Read timeout in seconds, zero to disable timeout (default: 60)")
+            .hasArg().withArgName("timeout").withType(Number.class).withLongOpt("read-timeout").create("d")),
+    /**
+     * Number of MITM worker threads
+     */
+    @SuppressWarnings("static-access")
+    MITM_WORKER_THREADS(OptionBuilder.withDescription("Number of MITM worker threads. (default: number of available processors)")
+            .hasArg().withArgName("worker threads").withType(Number.class).withLongOpt("mitm-worker-threads")
+            .create("t"));
 
     private final Option option;
 
@@ -143,6 +152,7 @@ public enum CliOption {
         options.addOption(CLIENTS.getOption());
         options.addOption(CONNECTION_TIMEOUT.getOption());
         options.addOption(READ_TIMEOUT.getOption());
+        options.addOption(MITM_WORKER_THREADS.getOption());
         options.addOptionGroup(lang);
 
         return options;

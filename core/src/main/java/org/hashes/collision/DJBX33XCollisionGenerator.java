@@ -36,6 +36,16 @@ public class DJBX33XCollisionGenerator extends AbstractMITMGenerator {
         super(new DJBX33XHashAlgorithm(), seed);
     }
 
+    /**
+     * Creates a new instance with specified seed.
+     * 
+     * @param seed MITM seed
+     * @param workerThreads number of worker threads, If null the number of available processors is used
+     */
+    public DJBX33XCollisionGenerator(final String seed, final Integer workerThreads) {
+        super(new DJBX33XHashAlgorithm(), seed, workerThreads);
+    }
+
     @Override
     protected int hashBack(final String key, final int end) {
         Preconditions.checkNotNull(key, "key");

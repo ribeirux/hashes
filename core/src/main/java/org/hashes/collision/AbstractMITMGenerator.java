@@ -15,7 +15,7 @@
  */
 package org.hashes.collision;
 
-import java.util.Arrays;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,6 +27,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hashes.algorithm.HashAlgorithm;
 
 import com.google.common.base.Preconditions;
@@ -40,6 +42,8 @@ import com.google.common.collect.ImmutableList.Builder;
  * @version $Revision$
  */
 public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
+
+    private static final Log LOG = LogFactory.getLog(AbstractMITMGenerator.class);
 
     private static final int LOOKUP_MAP_SIZE = (int) Math.pow(2, 18);
 
@@ -55,6 +59,8 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
 
     private final String seed;
 
+    private final int workerThreads;
+
     /**
      * Creates a new instance with specified hash algorithm and seed.
      * 
@@ -62,8 +68,25 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
      * @param seed MITM seed
      */
     public AbstractMITMGenerator(final HashAlgorithm hashAlgorithm, final String seed) {
+        this(hashAlgorithm, seed, null);
+    }
+
+    /**
+     * Creates a new instance with specified hash algorithm and seed.
+     * 
+     * @param hashAlgorithm the hash algorithm
+     * @param seed MITM seed
+     * @param workerThreads number of worker threads, If null the number of available processors is used
+     */
+    public AbstractMITMGenerator(final HashAlgorithm hashAlgorithm, final String seed, final Integer workerThreads) {
         super(hashAlgorithm);
         this.seed = Preconditions.checkNotNull(seed, "seed");
+        if (workerThreads == null) {
+            this.workerThreads = Runtime.getRuntime().availableProcessors();
+        } else {
+            Preconditions.checkArgument(workerThreads > 0, "workerThreads");
+            this.workerThreads = workerThreads;
+        }
     }
 
     @Override
@@ -106,9 +129,9 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
     }
 
     private String randomString(final int size) {
-        final char[] random = new char[size];
+        final StringBuilder random = new StringBuilder(size);
         for (int i = 0; i < size; i++) {
-            random[i] = (char) (Math.random() * (END_KEY - START_KEY + 1) + START_KEY);
+            random.append((char) (Math.random() * (END_KEY - START_KEY + 1) + START_KEY));
         }
 
         return String.valueOf(random);
@@ -117,13 +140,19 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
     private List<Callable<List<String>>> buildTasks(final Map<Integer, String> lookupMap, final int size) {
 
         final int range = END_KEY - START_KEY + 1;
-        final int maxWorkers = Math.min(range, Runtime.getRuntime().availableProcessors());
+        final int maxWorkers = Math.min(range, this.workerThreads);
+
+        if (maxWorkers != this.workerThreads) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn(MessageFormat.format(
+                        "The number of MITM worker threads is too high ({0}). Using: {1} threads", this.workerThreads,
+                        maxWorkers));
+            }
+        }
+
         final int interval = range / maxWorkers;
-
         final AtomicLong keyCounter = new AtomicLong();
-
         final Builder<Callable<List<String>>> tasks = ImmutableList.builder();
-
         for (int i = 0; i < maxWorkers; i++) {
             final char start = (char) (i * interval + START_KEY);
             final char end = (i == maxWorkers - 1 ? END_KEY : (char) (start + interval - 1));
@@ -178,27 +207,23 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
             final List<String> collisions = new LinkedList<String>();
 
             // use char array instead of String, to improve performance
-            this.crack(new char[KEY_SIZE], 0, this.start, this.end, collisions);
+            this.crack("", this.start, this.end, collisions);
 
             return collisions;
         }
 
-        private void crack(final char[] prefix, final int prefixIndex, final char startChar, final char endChar,
-                final List<String> collisions) {
-            if (prefixIndex == KEY_SIZE) {
-                final String key = String.valueOf(prefix);
-                final String precomp = this.lookupMap.get(this.hashAlgorithm.hash(key));
+        private void crack(final String prefix, final char startChar, final char endChar, final List<String> collisions) {
+            if (prefix.length() == KEY_SIZE) {
+                final String precomp = this.lookupMap.get(this.hashAlgorithm.hash(prefix));
                 if (precomp != null) {
                     final long currentValue = this.keyCounter.getAndIncrement();
                     if (currentValue < this.maxNumberOfKeys) {
-                        collisions.add(key + precomp);
+                        collisions.add(prefix + precomp);
                     }
                 }
             } else {
                 for (char i = startChar; (i <= endChar) && (this.maxNumberOfKeys > this.keyCounter.get()); i++) {
-                    final char[] newPrefix = Arrays.copyOf(prefix, prefix.length);
-                    newPrefix[prefixIndex] = i;
-                    this.crack(newPrefix, prefixIndex + 1, START_KEY, END_KEY, collisions);
+                    this.crack(prefix + i, START_KEY, END_KEY, collisions);
                 }
             }
         }

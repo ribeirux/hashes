@@ -29,6 +29,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hashes.CollisionInjector;
+import org.hashes.collision.AbstractCollisionGenerator;
 import org.hashes.collision.DJBX31ACollisionGenerator;
 import org.hashes.collision.DJBX33ACollisionGenerator;
 import org.hashes.collision.DJBX33XCollisionGenerator;
@@ -101,7 +102,6 @@ public class HashesCli {
         final ConfigurationBuilder builder = new ConfigurationBuilder(url.getHost());
 
         // optional fields
-
         // URL
         builder.withSchemeName(url.getProtocol());
         final int port = url.getPort();
@@ -114,16 +114,9 @@ public class HashesCli {
         }
 
         // language
-        if (cmd.hasOption(CliOption.JAVA.getOption().getOpt())) {
-            builder.withCollisionGenerator(new DJBX31ACollisionGenerator());
-        } else if (cmd.hasOption(CliOption.PHP.getOption().getOpt())) {
-            builder.withCollisionGenerator(new DJBX33ACollisionGenerator());
-        } else if (cmd.hasOption(CliOption.ASP.getOption().getOpt())) {
-            final String seed = (String) cmd.getParsedOptionValue(CliOption.ASP.getOption().getOpt());
-            builder.withCollisionGenerator(new DJBX33XCollisionGenerator(seed));
-        } else if (cmd.hasOption(CliOption.V8.getOption().getOpt())) {
-            final String seed = (String) cmd.getParsedOptionValue(CliOption.V8.getOption().getOpt());
-            builder.withCollisionGenerator(new V8CollisionGenerator(seed));
+        final AbstractCollisionGenerator algorithm = getCollisionGenerator(cmd);
+        if (algorithm != null) {
+            builder.withCollisionGenerator(algorithm);
         }
 
         final String saveKeys = (String) cmd.getParsedOptionValue(CliOption.SAVE_KEYS.getOption().getOpt());
@@ -185,6 +178,44 @@ public class HashesCli {
         }
 
         return builder.build();
+    }
+
+    private static Integer getMITMWorkerThreads(final CommandLine cmd) throws ParseException {
+        Integer mitmWorkerThreads = null;
+
+        if (cmd.hasOption(CliOption.MITM_WORKER_THREADS.getOption().getOpt())) {
+            mitmWorkerThreads = ((Number) cmd.getParsedOptionValue(CliOption.MITM_WORKER_THREADS.getOption().getOpt()))
+                    .intValue();
+            if (mitmWorkerThreads <= 0) {
+                throw new ParseException("The number of MITM workers should be greater than 0");
+            }
+        }
+
+        return mitmWorkerThreads;
+    }
+
+    private static AbstractCollisionGenerator getCollisionGenerator(final CommandLine cmd) throws ParseException {
+        AbstractCollisionGenerator algorithm = null;
+
+        if (cmd.hasOption(CliOption.JAVA.getOption().getOpt())) {
+
+            algorithm = new DJBX31ACollisionGenerator();
+        } else if (cmd.hasOption(CliOption.PHP.getOption().getOpt())) {
+
+            algorithm = new DJBX33ACollisionGenerator();
+        } else if (cmd.hasOption(CliOption.ASP.getOption().getOpt())) {
+
+            final String seed = (String) cmd.getParsedOptionValue(CliOption.ASP.getOption().getOpt());
+            final Integer workerThreads = getMITMWorkerThreads(cmd);
+            algorithm = new DJBX33XCollisionGenerator(seed, workerThreads);
+        } else if (cmd.hasOption(CliOption.V8.getOption().getOpt())) {
+
+            final String seed = (String) cmd.getParsedOptionValue(CliOption.V8.getOption().getOpt());
+            final Integer workerThreads = getMITMWorkerThreads(cmd);
+            algorithm = new V8CollisionGenerator(seed, workerThreads);
+        }
+
+        return algorithm;
     }
 
     private static void printHelp(final Options options) {
