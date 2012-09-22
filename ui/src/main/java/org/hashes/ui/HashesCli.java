@@ -36,6 +36,7 @@ import org.hashes.collision.DJBX33XCollisionGenerator;
 import org.hashes.collision.V8CollisionGenerator;
 import org.hashes.config.Configuration;
 import org.hashes.config.Configuration.ConfigurationBuilder;
+import org.hashes.ui.progress.SysOutProgressMonitorFactory;
 
 /**
  * Hashes command line interface implementation.
@@ -117,6 +118,10 @@ public class HashesCli {
         final AbstractCollisionGenerator algorithm = getCollisionGenerator(cmd);
         if (algorithm != null) {
             builder.withCollisionGenerator(algorithm);
+        }
+
+        if (cmd.hasOption(CliOption.PROGRESS_BAR.getOption().getOpt())) {
+            builder.withProgressMonitorFactory(new SysOutProgressMonitorFactory());
         }
 
         final String saveKeys = (String) cmd.getParsedOptionValue(CliOption.SAVE_KEYS.getOption().getOpt());

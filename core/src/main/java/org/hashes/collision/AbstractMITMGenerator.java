@@ -25,11 +25,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hashes.algorithm.HashAlgorithm;
+import org.hashes.progress.ProgressMonitor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -90,12 +91,10 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
     }
 
     @Override
-    public List<String> generateCollisions(final int numberOfKeys) {
-        Preconditions.checkArgument(numberOfKeys > 0, "numberOfKeys");
-
+    protected List<String> generateNewCollisions(final int numberOfKeys, final ProgressMonitor monitor) {
         final int hash = this.getHashAlgorithm().hash(this.seed);
         final Map<Integer, String> lookupMap = this.createLookupMap(hash);
-        final List<Callable<List<String>>> tasks = this.buildTasks(lookupMap, numberOfKeys);
+        final List<Callable<List<String>>> tasks = this.buildTasks(lookupMap, numberOfKeys, monitor);
         final ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
 
         try {
@@ -137,7 +136,8 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
         return String.valueOf(random);
     }
 
-    private List<Callable<List<String>>> buildTasks(final Map<Integer, String> lookupMap, final int size) {
+    private List<Callable<List<String>>> buildTasks(final Map<Integer, String> lookupMap, final int size,
+            final ProgressMonitor monitor) {
 
         final int range = END_KEY - START_KEY + 1;
         final int maxWorkers = Math.min(range, this.workerThreads);
@@ -151,13 +151,13 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
         }
 
         final int interval = range / maxWorkers;
-        final AtomicLong keyCounter = new AtomicLong();
+        final AtomicInteger keyCounter = new AtomicInteger();
         final Builder<Callable<List<String>>> tasks = ImmutableList.builder();
         for (int i = 0; i < maxWorkers; i++) {
             final char start = (char) (i * interval + START_KEY);
             final char end = (i == maxWorkers - 1 ? END_KEY : (char) (start + interval - 1));
 
-            tasks.add(new MITMWorker(start, end, keyCounter, size, lookupMap, this.getHashAlgorithm()));
+            tasks.add(new MITMWorker(start, end, keyCounter, size, lookupMap, this.getHashAlgorithm(), monitor));
         }
 
         return tasks.build();
@@ -178,13 +178,13 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
      * @author ribeirux
      * @version $Revision$
      */
-    private static class MITMWorker implements Callable<List<String>> {
+    private static final class MITMWorker implements Callable<List<String>> {
 
         private final char start;
 
         private final char end;
 
-        private final AtomicLong keyCounter;
+        private final AtomicInteger keyCounter;
 
         private final long maxNumberOfKeys;
 
@@ -192,21 +192,22 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
 
         private final HashAlgorithm hashAlgorithm;
 
-        public MITMWorker(final char start, final char end, final AtomicLong keyCounter, final int maxNumberOfKeys,
-                final Map<Integer, String> lookupMap, final HashAlgorithm hashAlgorithm) {
+        private final ProgressMonitor monitor;
+
+        private MITMWorker(final char start, final char end, final AtomicInteger keyCounter, final int maxNumberOfKeys,
+                final Map<Integer, String> lookupMap, final HashAlgorithm hashAlgorithm, final ProgressMonitor monitor) {
             this.start = start;
             this.end = end;
             this.keyCounter = keyCounter;
             this.maxNumberOfKeys = maxNumberOfKeys;
             this.lookupMap = lookupMap;
             this.hashAlgorithm = hashAlgorithm;
+            this.monitor = monitor;
         }
 
         @Override
         public List<String> call() {
             final List<String> collisions = new LinkedList<String>();
-
-            // use char array instead of String, to improve performance
             this.crack("", this.start, this.end, collisions);
 
             return collisions;
@@ -216,9 +217,10 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
             if (prefix.length() == KEY_SIZE) {
                 final String precomp = this.lookupMap.get(this.hashAlgorithm.hash(prefix));
                 if (precomp != null) {
-                    final long currentValue = this.keyCounter.getAndIncrement();
+                    final int currentValue = this.keyCounter.getAndIncrement();
                     if (currentValue < this.maxNumberOfKeys) {
                         collisions.add(prefix + precomp);
+                        this.monitor.update(currentValue);
                     }
                 }
             } else {

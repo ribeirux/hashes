@@ -58,6 +58,12 @@ public enum CliOption {
     V8(OptionBuilder.withDescription("Build V8 payload using MITM algorithm (default OFF)").hasOptionalArg()
             .withArgName("seed").withType(String.class).withLongOpt("v8").create("g")),
     /**
+     * Wait for response
+     */
+    @SuppressWarnings("static-access")
+    PROGRESS_BAR(OptionBuilder.withDescription("Display hash collision generation progress")
+            .withLongOpt("progress-bar").create("m")),
+    /**
      * Save keys
      */
     @SuppressWarnings("static-access")
@@ -109,9 +115,9 @@ public enum CliOption {
      * Number of MITM worker threads
      */
     @SuppressWarnings("static-access")
-    MITM_WORKER_THREADS(OptionBuilder.withDescription("Number of MITM worker threads. (default: number of available processors)")
-            .hasArg().withArgName("worker threads").withType(Number.class).withLongOpt("mitm-worker-threads")
-            .create("t"));
+    MITM_WORKER_THREADS(OptionBuilder
+            .withDescription("Number of MITM worker threads. (default: number of available processors)").hasArg()
+            .withArgName("worker threads").withType(Number.class).withLongOpt("mitm-worker-threads").create("t"));
 
     private final Option option;
 
@@ -144,6 +150,7 @@ public enum CliOption {
 
         final Options options = new Options();
         options.addOption(HELP.getOption());
+        options.addOption(PROGRESS_BAR.getOption());
         options.addOption(SAVE_KEYS.getOption());
         options.addOption(WAIT.getOption());
         options.addOption(NEW.getOption());

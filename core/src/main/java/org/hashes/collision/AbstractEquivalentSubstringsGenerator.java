@@ -20,8 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hashes.algorithm.HashAlgorithm;
-
-import com.google.common.base.Preconditions;
+import org.hashes.progress.ProgressMonitor;
 
 /**
  * Base class of equivalent substrings hash collision generator.
@@ -41,13 +40,12 @@ public abstract class AbstractEquivalentSubstringsGenerator extends AbstractColl
     }
 
     @Override
-    public List<String> generateCollisions(final int numberOfKeys) {
-        Preconditions.checkArgument(numberOfKeys > 0, "numberOfKeys");
-
+    protected List<String> generateNewCollisions(final int numberOfKeys, final ProgressMonitor monitor) {
         final List<String> seed = this.buildSeed();
 
         final List<String> generatedKeys = new ArrayList<String>(numberOfKeys);
 
+        // just don't update the progress, this is really fast! 
         if (numberOfKeys <= seed.size()) {
             generatedKeys.addAll(seed.subList(0, numberOfKeys));
         } else {

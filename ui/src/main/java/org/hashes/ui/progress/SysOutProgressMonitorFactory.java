@@ -13,35 +13,21 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.hashes.collision;
+package org.hashes.ui.progress;
 
-import java.util.List;
-
-import org.hashes.algorithm.HashAlgorithm;
 import org.hashes.progress.ProgressMonitor;
+import org.hashes.progress.ProgressMonitorFactory;
 
 /**
- * Brute force collision generator.
- * <p>
- * Created only for comparison purposes.
+ * Creates a progress monitor which prints the progress of a task to system out.
  * 
  * @author ribeirux
- * @version $Revision$
  */
-public class BruteForceCollisionGenerator extends AbstractCollisionGenerator {
-
-    /**
-     * Creates a new instance with specified hash algorithm
-     * 
-     * @param hashAlgorithm the hash algorithm
-     */
-    public BruteForceCollisionGenerator(final HashAlgorithm hashAlgorithm) {
-        super(hashAlgorithm);
-    }
+public class SysOutProgressMonitorFactory implements ProgressMonitorFactory {
 
     @Override
-    protected List<String> generateNewCollisions(final int numberOfKeys, final ProgressMonitor monitor) {
-        throw new UnsupportedOperationException("Operation not implemented");
+    public ProgressMonitor createProgressMonitor(final String info, final Integer totalWork) {
+        return new SysOutProgressMonitor(info, totalWork);
     }
 
 }

@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.hashes.algorithm.HashAlgorithm;
+import org.hashes.progress.NoProgressMonitorFactory;
+import org.hashes.progress.ProgressMonitorFactory;
 import org.testng.Assert;
 
 /**
@@ -28,6 +30,8 @@ import org.testng.Assert;
  * @version $Revision$
  */
 public class CollisionGeneratorTestBase {
+
+    private static final ProgressMonitorFactory MONITOR_FACTORY = new NoProgressMonitorFactory();
 
     // higher than 0
     private static final int NUMBER_OF_KEYS = 1000;
@@ -40,7 +44,7 @@ public class CollisionGeneratorTestBase {
      */
     public void testCollisionGenerator(final AbstractCollisionGenerator algorithm, final boolean forceNew) {
 
-        final List<String> collisions = algorithm.generateCollisions(NUMBER_OF_KEYS, forceNew);
+        final List<String> collisions = algorithm.generateCollisions(NUMBER_OF_KEYS, MONITOR_FACTORY, forceNew);
 
         Assert.assertEquals(collisions.size(), NUMBER_OF_KEYS);
 

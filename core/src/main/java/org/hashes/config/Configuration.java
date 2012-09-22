@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.hashes.collision.AbstractCollisionGenerator;
 import org.hashes.collision.DJBX33ACollisionGenerator;
+import org.hashes.progress.NoProgressMonitorFactory;
+import org.hashes.progress.ProgressMonitorFactory;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -49,6 +51,8 @@ public final class Configuration {
     private final String path;
 
     private final AbstractCollisionGenerator collisionGenerator;
+
+    private final ProgressMonitorFactory progressMonitorFactory;
 
     private final File collisionsFile;
 
@@ -87,6 +91,8 @@ public final class Configuration {
         private String path = "/";
 
         private AbstractCollisionGenerator collisionGenerator = new DJBX33ACollisionGenerator();
+
+        private ProgressMonitorFactory progressMonitorFactory = new NoProgressMonitorFactory();
 
         private File collisionsFile = null;
 
@@ -173,6 +179,20 @@ public final class Configuration {
          */
         public ConfigurationBuilder withCollisionGenerator(final AbstractCollisionGenerator collisionGenerator) {
             this.collisionGenerator = Preconditions.checkNotNull(collisionGenerator, "collisionGenerator");
+
+            return this;
+        }
+
+        /**
+         * Sets the progress monitor factory used to monitor hash collision generation.
+         * <p>
+         * Default: By default teh progress monitor is disabled
+         * 
+         * @param factory the progress monitor factory
+         * @return the configuration builder
+         */
+        public ConfigurationBuilder withProgressMonitorFactory(final ProgressMonitorFactory factory) {
+            this.progressMonitorFactory = Preconditions.checkNotNull(factory, "factory");
 
             return this;
         }
@@ -318,6 +338,7 @@ public final class Configuration {
         this.headers = new ImmutableMap.Builder<String, String>().putAll(builder.headers).build();
         this.path = builder.path;
         this.collisionGenerator = builder.collisionGenerator;
+        this.progressMonitorFactory = builder.progressMonitorFactory;
         this.collisionsFile = builder.collisionsFile;
         this.waitResponse = builder.waitResponse;
         this.generateNewKeys = builder.generateNewKeys;
@@ -380,6 +401,15 @@ public final class Configuration {
      */
     public AbstractCollisionGenerator getCollisionGenerator() {
         return this.collisionGenerator;
+    }
+
+    /**
+     * Gets the progressMonitorFactory property.
+     * 
+     * @return the progressMonitorFactory
+     */
+    public ProgressMonitorFactory getProgressMonitorFactory() {
+        return this.progressMonitorFactory;
     }
 
     /**

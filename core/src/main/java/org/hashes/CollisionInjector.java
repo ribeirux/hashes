@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hashes.config.Configuration;
 import org.hashes.config.HttpHost;
 import org.hashes.config.Protocol;
+import org.hashes.progress.ProgressMonitorFactory;
 import org.hashes.util.FileUtils;
 
 import com.google.common.base.Preconditions;
@@ -74,8 +75,12 @@ public class CollisionInjector {
      */
     public void start() {
 
-        final List<String> collisions = this.configuration.getCollisionGenerator().generateCollisions(
-                this.configuration.getNumberOfKeys(), this.configuration.isGenerateNewKeys());
+        final ProgressMonitorFactory factory = this.configuration.getProgressMonitorFactory();
+        final int numberOfKeys = this.configuration.getNumberOfKeys();
+        final boolean newKeys = this.configuration.isGenerateNewKeys();
+
+        final List<String> collisions = this.configuration.getCollisionGenerator().generateCollisions(numberOfKeys,
+                factory, newKeys);
 
         this.saveCollisions(collisions);
 
