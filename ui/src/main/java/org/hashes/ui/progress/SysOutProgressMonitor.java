@@ -35,7 +35,7 @@ public class SysOutProgressMonitor implements ProgressMonitor {
 
     private final Integer totalWork;
 
-    private boolean done;
+    private volatile boolean done;
 
     // concurrency
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
