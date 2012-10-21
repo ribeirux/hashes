@@ -116,13 +116,13 @@ public enum CliOption {
      */
     @SuppressWarnings("static-access")
     MITM_WORKER_THREADS(OptionBuilder
-            .withDescription("Number of MITM worker threads. (default: number of available processors)").hasArg()
+            .withDescription("Number of MITM worker threads (default: number of available processors)").hasArg()
             .withArgName("worker threads").withType(Number.class).withLongOpt("mitm-worker-threads").create("t")),
     /**
      * Custom headers.
      */
     @SuppressWarnings("static-access")
-    HEADER(OptionBuilder.withDescription("Use extra header (overrides internal header with same name.").hasArg()
+    HEADER(OptionBuilder.withDescription("Use extra header (overrides internal header with same name)").hasArg()
             .withArgName("header").withLongOpt("header").create("e"));
 
     private final Option option;
