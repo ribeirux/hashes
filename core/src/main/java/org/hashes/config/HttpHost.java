@@ -15,6 +15,7 @@
  */
 package org.hashes.config;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -23,7 +24,9 @@ import com.google.common.base.Preconditions;
  * @author ribeirux
  * @version $Revision$
  */
-public class HttpHost {
+public final class HttpHost {
+
+    private static final String HOST_PORT_SEPARATOR = ":";
 
     private final Protocol protocol;
 
@@ -42,15 +45,18 @@ public class HttpHost {
      * @param hostname target host
      * @param port target port
      * @param connectTimeout read timeout in milliseconds
-     * @param readTImeout connect timeout in milliseconds
+     * @param readTimeout connect timeout in milliseconds
      */
     public HttpHost(final Protocol protocol, final String hostname, final int port, final int connectTimeout,
-            final int readTImeout) {
+            final int readTimeout) {
+        Preconditions.checkArgument(port >= 0);
+        Preconditions.checkArgument(connectTimeout >= 0, "connectTimeout");
+        Preconditions.checkArgument(readTimeout >= 0, "readTImeout");
         this.protocol = Preconditions.checkNotNull(protocol);
         this.hostname = Preconditions.checkNotNull(hostname, "hostname");
         this.port = port;
         this.connectTimeout = connectTimeout;
-        this.readTimeout = readTImeout;
+        this.readTimeout = readTimeout;
     }
 
     /**
@@ -103,7 +109,62 @@ public class HttpHost {
      * 
      * @return true if the connection should use the default port, otherwise false
      */
-    public boolean hasDefaultPort() {
+    public boolean hasDefaultHttpPort() {
         return this.port == this.protocol.getDefaultPort();
     }
+
+    /**
+     * Gets the host.
+     * 
+     * @return the host
+     */
+    public String getHost() {
+        final StringBuilder hostValue = new StringBuilder(this.hostname);
+        if (!this.hasDefaultHttpPort()) {
+            hostValue.append(HOST_PORT_SEPARATOR);
+            hostValue.append(this.port);
+        }
+
+        return hostValue.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.protocol, this.hostname, this.port, this.connectTimeout, this.readTimeout);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final HttpHost other = (HttpHost) obj;
+
+        return Objects.equal(this.protocol, other.protocol) && Objects.equal(this.hostname, other.hostname)
+                && this.port == other.port && this.connectTimeout == other.connectTimeout
+                && this.readTimeout == other.readTimeout;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("HttpHost [protocol=");
+        builder.append(this.protocol);
+        builder.append(", hostname=");
+        builder.append(this.hostname);
+        builder.append(", port=");
+        builder.append(this.port);
+        builder.append(", connectTimeout=");
+        builder.append(this.connectTimeout);
+        builder.append(", readTimeout=");
+        builder.append(this.readTimeout);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

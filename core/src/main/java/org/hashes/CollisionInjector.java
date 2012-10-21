@@ -19,12 +19,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,6 +39,7 @@ import org.hashes.util.FileUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Collision injector.
@@ -136,55 +137,27 @@ public class CollisionInjector {
 
     protected void addRequestHeaders(final int contentLength, final StringBuilder payloadBuilder) {
 
-        final Set<String> keys = new HashSet<String>();
+        // http://www.ietf.org/rfc/rfc2616.txt
+        // Each header field consists of a name followed by a colon (":") and the field value. Field names are
+        // case-insensitive.
+        final Locale locale = Locale.ENGLISH;
+        final Map<String, String> defaultHeaders = new LinkedHashMap<String, String>();
+        defaultHeaders.put(HttpHeaders.HOST.toLowerCase(locale), this.configuration.getTarget().getHost());
+        defaultHeaders.put(HttpHeaders.CONTENT_TYPE.toLowerCase(locale), "application/x-www-form-urlencoded");
+        defaultHeaders.put(HttpHeaders.ACCEPT_CHARSET.toLowerCase(locale), this.configuration.getCharset().name());
+        defaultHeaders.put(HttpHeaders.CONTENT_LENGTH.toLowerCase(locale), String.valueOf(contentLength));
+        defaultHeaders.put(HttpHeaders.USER_AGENT.toLowerCase(locale), "hashes");
+        defaultHeaders.put(HttpHeaders.ACCEPT.toLowerCase(locale), "*/*");
 
-        final HttpHost target = this.configuration.getTarget();
-
-        final String hostKey = "host";
-        payloadBuilder.append(hostKey);
-        payloadBuilder.append(": ");
-        payloadBuilder.append(target.getHostname());
-        if (!target.hasDefaultPort()) {
-            payloadBuilder.append(":");
-            payloadBuilder.append(target.getPort());
+        for (final Entry<String, String> externalHeaders : this.configuration.getHeaders().entrySet()) {
+            defaultHeaders.put(externalHeaders.getKey().toLowerCase(locale), externalHeaders.getValue());
         }
-        payloadBuilder.append("\r\n");
-        keys.add(hostKey);
 
-        // content type
-        final String contentTypeKey = "content-type";
-        payloadBuilder.append(contentTypeKey);
-        payloadBuilder.append(": application/x-www-form-urlencoded");
-        payloadBuilder.append("\r\n");
-        keys.add(contentTypeKey);
-
-        // accept charset
-        final String acceptCharsetKey = "accept-charset";
-        payloadBuilder.append(acceptCharsetKey);
-        payloadBuilder.append(": ");
-        payloadBuilder.append(this.configuration.getCharset().name());
-        payloadBuilder.append("\r\n");
-        keys.add(acceptCharsetKey);
-
-        // content length
-        final String contentLengthKey = "content-length";
-        payloadBuilder.append(contentLengthKey);
-        payloadBuilder.append(": ");
-        payloadBuilder.append(contentLength);
-        payloadBuilder.append("\r\n");
-        keys.add(contentLengthKey);
-
-        // add additional headers
-        final Map<String, String> additionalHeaders = this.configuration.getHeaders();
-        for (final Entry<String, String> header : additionalHeaders.entrySet()) {
-            if (keys.contains(header.getKey())) {
-                LOG.warn("Could not override header: " + header.getKey());
-            } else {
-                payloadBuilder.append(header.getKey());
-                payloadBuilder.append(": ");
-                payloadBuilder.append(header.getValue());
-                payloadBuilder.append("\r\n");
-            }
+        for (final Entry<String, String> header : defaultHeaders.entrySet()) {
+            payloadBuilder.append(header.getKey());
+            payloadBuilder.append(": ");
+            payloadBuilder.append(header.getValue());
+            payloadBuilder.append("\r\n");
         }
 
         payloadBuilder.append("\r\n");

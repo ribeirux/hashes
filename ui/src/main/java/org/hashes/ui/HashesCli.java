@@ -48,9 +48,11 @@ public class HashesCli {
 
     private static final Log LOG = LogFactory.getLog(HashesCli.class);
 
-    private static final int SECOND_MILLIS = 1000;
+    private static final int MILLIS_IN_SECOND = 1000;
 
     private static final int FORMATTER_WIDTH = 120;
+
+    private static final String HEADER_SEPARATOR = ":";
 
     private static final String CLI_SYNTAX = "hashes [options...] <POST url>";
 
@@ -114,7 +116,7 @@ public class HashesCli {
             builder.withPath(path);
         }
 
-        // language
+        // algorithm
         final AbstractCollisionGenerator algorithm = getCollisionGenerator(cmd);
         if (algorithm != null) {
             builder.withCollisionGenerator(algorithm);
@@ -170,7 +172,7 @@ public class HashesCli {
             if (connectionTimeout < 0) {
                 throw new ParseException("The connection timeout should be greater than or equal to 0");
             }
-            builder.withConnectTimeout(connectionTimeout * SECOND_MILLIS);
+            builder.withConnectTimeout(connectionTimeout * MILLIS_IN_SECOND);
         }
 
         if (cmd.hasOption(CliOption.READ_TIMEOUT.getOption().getOpt())) {
@@ -179,7 +181,18 @@ public class HashesCli {
             if (readTimeout < 0) {
                 throw new ParseException("The read timeout should be greater than or equal to 0");
             }
-            builder.withReadTimeout(readTimeout * SECOND_MILLIS);
+            builder.withReadTimeout(readTimeout * MILLIS_IN_SECOND);
+        }
+
+        if (cmd.hasOption(CliOption.HEADER.getOption().getOpt())) {
+            for (final String value : cmd.getOptionValues(CliOption.HEADER.getOption().getOpt())) {
+                final String[] header = value.split(HEADER_SEPARATOR);
+                if (header.length != 2) {
+                    throw new ParseException("Malformed HTTP header: " + value);
+                }
+
+                builder.withHTTPHeader(header[0], header[1]);
+            }
         }
 
         return builder.build();

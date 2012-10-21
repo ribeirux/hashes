@@ -17,8 +17,7 @@ package org.hashes.config;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.hashes.collision.AbstractCollisionGenerator;
@@ -40,12 +39,8 @@ public final class Configuration {
 
     private final Charset charset;
 
-    private final Locale locale;
-
     // mandatory
     private final HttpHost target;
-
-    private final Map<String, String> headers;
 
     // optional
     private final String path;
@@ -66,6 +61,8 @@ public final class Configuration {
 
     private final int numberOfClients;
 
+    private final Map<String, String> headers;
+
     /**
      * Configuration builder.
      * 
@@ -76,12 +73,8 @@ public final class Configuration {
 
         private final Charset charset = Charsets.UTF_8;
 
-        private final Locale locale = Locale.ENGLISH;
-
         // mandatory
         private final String hostname;
-
-        private final Map<String, String> headers;
 
         // optional
         private Protocol protocol = Protocol.HTTP;
@@ -110,6 +103,8 @@ public final class Configuration {
 
         private int readTimeout = 60000;
 
+        private final Map<String, String> headers = new LinkedHashMap<String, String>();
+
         /**
          * Creates a new builder with mandatory fields.
          * 
@@ -117,16 +112,6 @@ public final class Configuration {
          */
         public ConfigurationBuilder(final String hostname) {
             this.hostname = Preconditions.checkNotNull(hostname, "hostname");
-            this.headers = this.createDefaultHeaders();
-        }
-
-        private Map<String, String> createDefaultHeaders() {
-            final Map<String, String> defaultHeaders = new HashMap<String, String>();
-
-            defaultHeaders.put("user-agent", "hashes");
-            defaultHeaders.put("accept", "*/*");
-
-            return defaultHeaders;
         }
 
         /**
@@ -139,7 +124,7 @@ public final class Configuration {
          */
         public ConfigurationBuilder withSchemeName(final String schemeName) {
             Preconditions.checkNotNull(schemeName, "schemeName");
-            this.protocol = Protocol.fromSchemeName(schemeName.toLowerCase(this.locale));
+            this.protocol = Protocol.fromSchemeName(schemeName);
             this.port = this.protocol.getDefaultPort();
 
             return this;
@@ -152,6 +137,7 @@ public final class Configuration {
          * @return the configuration builder
          */
         public ConfigurationBuilder withPort(final int port) {
+            Preconditions.checkArgument(port >= 0, "port");
             this.port = port;
 
             return this;
@@ -314,9 +300,7 @@ public final class Configuration {
          * @return the configuration builder
          */
         public ConfigurationBuilder withHTTPHeader(final String key, final String value) {
-            this.headers.put(//
-                    Preconditions.checkNotNull(key, "key").toLowerCase(this.locale), //
-                    Preconditions.checkNotNull(value, "value"));
+            this.headers.put(Preconditions.checkNotNull(key, "key"), Preconditions.checkNotNull(value, "value"));
 
             return this;
         }
@@ -334,8 +318,6 @@ public final class Configuration {
 
     private Configuration(final ConfigurationBuilder builder) {
         this.charset = builder.charset;
-        this.locale = builder.locale;
-        this.headers = new ImmutableMap.Builder<String, String>().putAll(builder.headers).build();
         this.path = builder.path;
         this.collisionGenerator = builder.collisionGenerator;
         this.progressMonitorFactory = builder.progressMonitorFactory;
@@ -347,6 +329,7 @@ public final class Configuration {
         this.numberOfClients = builder.numberOfClients;
         this.target = new HttpHost(builder.protocol, builder.hostname, builder.port, builder.connectTimeout,
                 builder.readTimeout);
+        this.headers = new ImmutableMap.Builder<String, String>().putAll(builder.headers).build();
     }
 
     /**
@@ -356,15 +339,6 @@ public final class Configuration {
      */
     public Charset getCharset() {
         return this.charset;
-    }
-
-    /**
-     * Gets the locale property.
-     * 
-     * @return the locale property
-     */
-    public Locale getLocale() {
-        return this.locale;
     }
 
     /**

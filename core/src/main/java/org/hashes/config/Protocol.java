@@ -15,6 +15,8 @@
  */
 package org.hashes.config;
 
+import java.util.Locale;
+
 import com.google.common.base.Preconditions;
 
 /**
@@ -26,11 +28,11 @@ import com.google.common.base.Preconditions;
 public enum Protocol {
 
     /**
-     * Http protocol.
+     * Lower case Http protocol.
      */
     HTTP("http", 80),
     /**
-     * Https protocol.
+     * Lower case Https protocol.
      */
     HTTPS("https", 443);
 
@@ -69,12 +71,12 @@ public enum Protocol {
      * @throws IllegalArgumentException if the scheme name is nome supported
      */
     public static Protocol fromSchemeName(final String schemeName) {
-        Preconditions.checkNotNull(schemeName, "schemeName");
+        final String lowerCaseScheme = Preconditions.checkNotNull(schemeName, "schemeName").toLowerCase(Locale.ENGLISH);
 
         Protocol result = null;
 
         for (final Protocol protocol : Protocol.values()) {
-            if (protocol.getSchemeName().equals(schemeName)) {
+            if (protocol.getSchemeName().equals(lowerCaseScheme)) {
                 result = protocol;
                 break;
             }
