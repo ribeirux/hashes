@@ -142,12 +142,9 @@ public abstract class AbstractMITMGenerator extends AbstractCollisionGenerator {
         final int range = END_KEY - START_KEY + 1;
         final int maxWorkers = Math.min(range, this.workerThreads);
 
-        if (maxWorkers != this.workerThreads) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn(MessageFormat.format(
-                        "The number of MITM worker threads is too high ({0}). Using: {1} threads", this.workerThreads,
-                        maxWorkers));
-            }
+        if (maxWorkers != this.workerThreads && LOG.isWarnEnabled()) {
+            LOG.warn(MessageFormat.format("The number of MITM worker threads is too high ({0}). Using: {1} threads",
+                    this.workerThreads, maxWorkers));
         }
 
         final int interval = range / maxWorkers;

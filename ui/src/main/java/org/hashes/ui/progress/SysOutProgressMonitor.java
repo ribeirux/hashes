@@ -60,18 +60,18 @@ public class SysOutProgressMonitor implements ProgressMonitor {
 
     @Override
     public void update(final int work) {
-        if (this.totalWork != null) {
-            if (work * 100 % this.totalWork == 0) {
-                final String progress = this.buildProgress(work * 100 / this.totalWork);
-                // concurrent reads
-                this.read.lock();
-                try {
-                    if (!this.done) {
-                        this.printProgress(progress);
-                    }
-                } finally {
-                    this.read.unlock();
+        if (this.totalWork != null && work * 100 % this.totalWork == 0) {
+            final String progress = this.buildProgress(work * 100 / this.totalWork);
+
+            // concurrent reads
+            this.read.lock();
+            try {
+                // once done, never go back
+                if (!this.done) {
+                    this.printProgress(progress);
                 }
+            } finally {
+                this.read.unlock();
             }
         }
     }
@@ -83,6 +83,7 @@ public class SysOutProgressMonitor implements ProgressMonitor {
 
         this.write.lock();
         try {
+            // once done, never go back
             doneBefore = this.done;
             if (!this.done) {
                 this.done = true;
