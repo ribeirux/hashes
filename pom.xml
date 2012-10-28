@@ -21,7 +21,7 @@
 
 	<groupId>org.hashes</groupId>
 	<artifactId>hashes</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>Hash collision denial of service testing tool</name>
 	<description>Cross-plataform tool, that generates and injects different keys with the same hash code, in order to test web applications against hash collision attacks.</description>
 	<url>https://github.com/ribeirux/hashes</url>
