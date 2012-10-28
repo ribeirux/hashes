@@ -187,7 +187,12 @@ public class HashesCli {
         if (cmd.hasOption(CliOption.HEADER.getOption().getOpt())) {
             for (final String value : cmd.getOptionValues(CliOption.HEADER.getOption().getOpt())) {
                 final String[] header = value.split(HEADER_SEPARATOR);
-                if (header.length != 2) {
+                // trim headers
+                for (int i = 0; i < header.length; i++) {
+                    header[i] = header[i].trim();
+                }
+
+                if (header.length != 2 || header[0].isEmpty() || header[1].isEmpty()) {
                     throw new ParseException("Malformed HTTP header: " + value);
                 }
 

@@ -35,4 +35,4 @@ if [ ! -x "$JAVACMD" ]; then
 	exit 1
 fi
 
-$JAVACMD -cp $CP $MAIN_CLASS $*
+$JAVACMD -cp $CP $MAIN_CLASS "$@"
