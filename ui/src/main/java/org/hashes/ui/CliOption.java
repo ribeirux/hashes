@@ -61,7 +61,7 @@ public enum CliOption {
      * Wait for response
      */
     @SuppressWarnings("static-access")
-    PROGRESS_BAR(OptionBuilder.withDescription("Display hash collision generation progress")
+    PROGRESS_BAR(OptionBuilder.withDescription("Display hash collision generation progress (default OFF)")
             .withLongOpt("progress-bar").create("m")),
     /**
      * Save keys

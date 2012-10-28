@@ -18,17 +18,20 @@ Hashes is released under the terms of the Apache License Version 2.0.
 
 **Use only for testing purposes, not for evil.**
 
-	hashes [options...] <POST url>
-	 -a,--asp <seed>                     Build ASP payload (default OFF)
-	 -b,--connection-timeout <timeout>   Connection timeout in seconds, zero to disable timeout (default 60)
-	 -c,--clients <clients>              Number of clients to run (default 1)
-	 -d,--read-timeout <timeout>         Read timeout in seconds, zero to disable timeout (default 60)
-	 -g,--v8 <seed>                      Build V8 payload (default OFF)
-	 -h,--help                           Print this message
-	 -j,--java                           Build JAVA payload (default OFF)
-	 -k,--keys <keys>                    Number of keys to inject per request (default 85000)
-	 -n,--new                            Generate new keys instead of using pre-built collisions (default OFF)
-	 -p,--php                            Build PHP payload (default ON)
-	 -r,--requests <requests>            Number of requests to submit per client (default 1)
-	 -s,--save <file>                    Save keys to file (default OFF)
-	 -w,--wait                           Wait for response (default OFF)
+	usage: hashes [options...] <POST url>
+	 -a,--asp <seed>                             Build ASP payload using MITM algorithm (default OFF)
+	 -b,--connection-timeout <timeout>           Connection timeout in seconds, zero to disable timeout (default: 60)
+	 -c,--clients <clients>                      Number of clients to run (default: 1)
+	 -d,--read-timeout <timeout>                 Read timeout in seconds, zero to disable timeout (default: 60)
+	 -e,--header <header>                        Use extra header (overrides internal header with same name)
+	 -g,--v8 <seed>                              Build V8 payload using MITM algorithm (default OFF)
+	 -h,--help                                   Print this message
+	 -j,--java                                   Build JAVA payload using equivalent substrings algorithm (default OFF)
+	 -k,--keys <keys>                            Number of keys to inject per request (default: 85000)
+	 -m,--progress-bar                           Display hash collision generation progress (default OFF)
+	 -n,--new                                    Generate new keys instead of using pre-built collisions (default OFF)
+	 -p,--php                                    Build PHP payload using equivalent substrings algorithm (default ON)
+	 -r,--requests <requests>                    Number of requests to submit per client (default: 1)
+	 -s,--save <file>                            Save keys to file (default OFF)
+	 -t,--mitm-worker-threads <worker threads>   Number of MITM worker threads (default: number of available processors)
+	 -w,--wait                                   Wait for response (default OFF)
