@@ -31,6 +31,7 @@ To build hashes:
 
 **Use only for testing purposes, not for evil.**
 
+
   usage: hashes [options...] <POST url>
    -a,--asp <seed>                             Build ASP payload using MITM algorithm (default: OFF)
    -b,--connection-timeout <timeout>           Connection timeout in seconds, zero to disable timeout (default: 60)
@@ -48,3 +49,4 @@ To build hashes:
    -s,--save <file>                            Save keys to file (default: OFF)
    -t,--mitm-worker-threads <worker threads>   Number of MITM worker threads (default: number of available processors)
    -w,--wait                                   Wait for response (default: OFF)
+
