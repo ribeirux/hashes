@@ -37,48 +37,48 @@ public enum CliOption {
      * PHP
      */
     @SuppressWarnings("static-access")
-    PHP(OptionBuilder.withDescription("Build PHP payload using equivalent substrings algorithm (default ON)")
+    PHP(OptionBuilder.withDescription("Build PHP payload using equivalent substrings algorithm (default: ON)")
             .withLongOpt("php").create("p")),
     /**
      * JAVA
      */
     @SuppressWarnings("static-access")
-    JAVA(OptionBuilder.withDescription("Build JAVA payload using equivalent substrings algorithm (default OFF)")
+    JAVA(OptionBuilder.withDescription("Build JAVA payload using equivalent substrings algorithm (default: OFF)")
             .withLongOpt("java").create("j")),
     /**
      * ASP
      */
     @SuppressWarnings("static-access")
-    ASP(OptionBuilder.withDescription("Build ASP payload using MITM algorithm (default OFF)").hasOptionalArg()
+    ASP(OptionBuilder.withDescription("Build ASP payload using MITM algorithm (default: OFF)").hasOptionalArg()
             .withArgName("seed").withType(String.class).withLongOpt("asp").create("a")),
     /**
      * V8
      */
     @SuppressWarnings("static-access")
-    V8(OptionBuilder.withDescription("Build V8 payload using MITM algorithm (default OFF)").hasOptionalArg()
+    V8(OptionBuilder.withDescription("Build V8 payload using MITM algorithm (default: OFF)").hasOptionalArg()
             .withArgName("seed").withType(String.class).withLongOpt("v8").create("g")),
     /**
      * Wait for response
      */
     @SuppressWarnings("static-access")
-    PROGRESS_BAR(OptionBuilder.withDescription("Display hash collision generation progress (default OFF)")
+    PROGRESS_BAR(OptionBuilder.withDescription("Display hash collision generation progress (default: OFF)")
             .withLongOpt("progress-bar").create("m")),
     /**
      * Save keys
      */
     @SuppressWarnings("static-access")
-    SAVE_KEYS(OptionBuilder.withDescription("Save keys to file (default OFF)").hasArg().withArgName("file")
+    SAVE_KEYS(OptionBuilder.withDescription("Save keys to file (default: OFF)").hasArg().withArgName("file")
             .withType(String.class).withLongOpt("save").create("s")),
     /**
      * Wait for response
      */
     @SuppressWarnings("static-access")
-    WAIT(OptionBuilder.withDescription("Wait for response (default OFF)").withLongOpt("wait").create("w")),
+    WAIT(OptionBuilder.withDescription("Wait for response (default: OFF)").withLongOpt("wait").create("w")),
     /**
      * Generate new keys
      */
     @SuppressWarnings("static-access")
-    NEW(OptionBuilder.withDescription("Generate new keys instead of using pre-built collisions (default OFF)")
+    NEW(OptionBuilder.withDescription("Generate new keys instead of using pre-built collisions (default: OFF)")
             .withLongOpt("new").create("n")),
     /**
      * Keys

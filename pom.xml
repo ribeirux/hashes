@@ -333,7 +333,7 @@
 
 	<profiles>
 		<profile>
-			<id>doc</id>
+			<id>distribution</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
@@ -347,17 +347,6 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
 							<source>1.6</source>
-							<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-							<docletArtifact>
-								<groupId>org.umlgraph</groupId>
-								<artifactId>doclet</artifactId>
-								<version>5.1</version>
-							</docletArtifact>
-							<additionalparam>
-								-all
-								-link
-								-constructors
-							</additionalparam>
 						</configuration>
 						<executions>
 							<execution>
@@ -376,12 +365,14 @@
 					</plugin>
 				</plugins>
 			</build>
+            <modules>
+                <module>dist</module>
+            </modules>
 		</profile>
 	</profiles>
 
 	<modules>
 		<module>core</module>
 		<module>ui</module>
-		<module>dist</module>
 	</modules>
 </project>

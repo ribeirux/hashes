@@ -59,6 +59,7 @@
 							</descriptors>
 							<finalName>${project.parent.artifactId}-${project.version}</finalName>
 							<workDirectory>${project.build.directory}/assembly/work</workDirectory>
+                            <attach>false</attach>
 						</configuration>
 					</execution>
 				</executions>
